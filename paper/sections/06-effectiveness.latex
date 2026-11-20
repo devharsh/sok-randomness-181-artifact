@@ -1,0 +1,84 @@
+\section{Effectiveness and Counterfactuals}
+\label{sec:effectiveness}
+
+A remedy is useful only if it would have stopped real failures. Table~\ref{tab:coverage}
+crosses all twenty-eight corpus incidents with the fourteen remedy families. We first state the
+rules that produce its cells, then read it by column, asking what each remedy is good for, and by
+row, asking whether a preventing remedy existed when each system shipped.
+
+\input{sections/coverage_table}
+
+\subsection{Grading rules}
+\label{sec:coverage-rules}
+A cell is \hbna{} when the remedy acts on no stage the incident touches, with stage sets from
+Tables~\ref{tab:incidents} and~\ref{tab:remedies}. Otherwise it is \hbfull{} when the remedy,
+deployed as specified, removes the specific cause; \hbhalf{} when it detects the failure or limits
+its blast radius without removing the cause; and \hbnone{} when it would not have changed the
+outcome. R8 is graded by rule rather than case by case: \hbhalf{} when the incident is
+statistically observable and \hbnone{} otherwise, since an output test can only flag output that
+fails it. The other \hbfull{} and \hbhalf{} judgments are made per incident from its primary
+sources and recorded with a one-line reason in the released data. Availability refers to the date
+the vulnerable system shipped: Y means the preventing remedy was published and implemented in
+mainstream libraries, standards, or platforms; P that it was published but not standardized, not
+the default, or not available for that platform; E that it had been proposed without a production
+implementation; N that it had not been proposed in deployable form. The generating script checks
+that every judgment respects the stage rule. These rules make the judgments explicit and
+checkable rather than objective: a reader who disagrees with a cell can change it and regenerate
+every count reported here.
+
+\subsection{Reading by column: what each remedy is good for}
+Two columns carry the argument. R8, statistical testing and certification, is what industry
+deploys most widely, and it prevents none of the twenty-eight failures. It detects two, MIFARE and
+the \texttt{RDSEED} zeros, and against the silent majority, nineteen of twenty-eight, it has no
+effect even where it applies. R9, build-path verification, is the only family that prevents a
+failure on the build and integration surface, and it prevents all three corpus incidents that
+touch it, Debian, Juniper, and \coldcard{}. R13, verifiable entropy at key generation, also
+reaches \stage{$\ast$} but can at most detect. Among the remaining columns, prevention is
+concentrated: a vetted CSPRNG (R2) prevents nine incidents, robust seeding (R3) eight, hedged
+nonces (R5) four, and reseeding on lifecycle events (R4), a vetted source (R1), and formal
+verification (R11) three each. Six families prevent nothing in the corpus. Hedging (R6), user
+entropy (R10), and verifiable entropy (R13) contain or detect many failures, eight to ten each,
+without removing their causes, and anti-exfil signing (R14) targets nonce exfiltration, which has
+been demonstrated (Appendix~\ref{sec:covert}) but does not appear among deployed incidents. A
+fourteen-family toolkit is therefore, in practice, seven preventive families, one of which alone
+guards the build, and a layer of detection and containment.
+
+\subsection{Reading by row: the remedy usually existed}
+Twenty-four incidents have a preventing remedy in the catalog, and in twenty-two of them that
+remedy was available at least in part when the system shipped: fully in fifteen, partly in seven.
+The fifteen are mostly failures of defaults. A general-purpose generator was the convenient
+choice in MIFARE, the PHP token generators, Trust Wallet, Milk Sad, and Ill Bloom. Non-blocking
+early reads were the default behind Mining Ps and Qs. Random rather than deterministic nonces
+were the library default behind the Android and biased-nonce failures. Randomness failures in this
+corpus are, for the most part, not a research gap but a gap between available and deployed
+defenses. The exceptions are instructive. The only incident with no remedy yet proposed is the
+Debian patch of 2008, a \stage{$\ast$} failure, and \coldcard{} and Juniper, the other two
+\stage{$\ast$} failures, had only partial remedies: reproducible builds existed, but nothing bound
+the shipped binary to the intended source. The four incidents with no preventing remedy at all,
+the CTR\_DRBG cache attack, Minerva, TPM-Fail, and ROCA, mark the edge of a randomness catalog:
+they need constant-time implementations or vetted key-generation algorithms, which belong to
+implementation security rather than to randomness generation.
+
+\subsection{Access, observability, and impact}
+\label{sec:economics}
+Counterfactuals say which remedy would have helped. Which failures an adversary actually pursues
+depends on what exploitation costs, and the corpus attributes of Table~\ref{tab:incidents} show a
+consistent pattern. Eighteen of the twenty-eight incidents are exploitable from public data alone
+(A1). Thirteen of these are silent and twelve reach a whole ecosystem. The seven incidents that
+need local access (A2) include four of the five statistically observable ones, and the three
+supply-chain incidents (A3) are the \dualec{} cases. The cheapest failures to exploit are thus
+also the hardest to see and the widest in reach, and for a silent A1 failure the first external
+symptom is the exploitation itself. Defense in such cases must be preventive rather than
+reactive, which returns the argument to the preventive columns of the matrix.
+
+\subsection{Certification tracked the wrong property}
+Three incidents, \dualec{}, DUHK, and \coldcard{}, involved products that were certified,
+audited, or marketed on the strength of their randomness, and all three failed silently.
+Certification measured statistical quality and process conformance, which a predictable but
+uniform generator, or a build that bypasses the certified component, does not
+violate~\cite{checkoway2014dualec,cohney2018duhk,coinkite2026backgrounder}. The matrix suggests
+what an assurance regime should require in addition: a power-on known-answer test of the real
+entropy path that fails closed, a reproducible build that binds reviewed source to the shipped
+binary, and, where the primitive allows, deterministic or hedged constructions that take
+randomness out of the security argument. None of these is new. The contribution of the matrix is
+the evidence, incident by incident, that these are the defenses that track the failures.

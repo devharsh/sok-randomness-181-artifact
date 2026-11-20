@@ -1,0 +1,112 @@
+\section{Background, Threat Model, and Method}
+\label{sec:background}
+
+This section establishes the groundwork for the systematization that follows. We first fix the
+vocabulary of random number generation and the pipeline that produces it, then state the security
+goals a generator must meet together with the adversary models we use throughout the paper, and
+finally describe how we assembled and filtered the incident corpus that
+Section~\ref{sec:incidents} organizes.
+
+\subsection{Terminology}
+We use the vocabulary of the NIST SP 800-90 series, which covers DRBG mechanisms, entropy source
+validation, and, since 2025, the construction of complete generators from
+both~\cite{nist80090a,nist80090b,nist80090c}, together with RFC 4086~\cite{rfc4086}. \emph{Entropy} is a measure of unpredictability, quantified here in bits
+of min-entropy, the negative logarithm of the probability of the most likely value. A
+\emph{true random number generator} (TRNG), or entropy source, extracts entropy from a physical
+process such as thermal or ring-oscillator jitter. A \emph{pseudorandom number generator}
+(PRNG) is a deterministic function that stretches a short seed into a long output. A
+\emph{cryptographically secure} PRNG (CSPRNG) is one whose output is computationally
+indistinguishable from uniform even to an adversary who sees prior outputs. A \emph{deterministic
+random bit generator} (DRBG) is the NIST term for a CSPRNG with explicit instantiate, generate,
+and reseed interfaces. A \emph{seed} is the entropy input that instantiates a DRBG, and a
+\emph{reseed} injects fresh entropy into a running state. A \emph{nonce} is a value required to
+be unique, and sometimes also unpredictable, per use. ECDSA and DSA signatures consume a
+secret, unique, unpredictable nonce per signature, and any repetition or bias leaks the signing
+key~\cite{bos2014ecc,breitner2019biased}.
+
+A deployed generator is therefore a pipeline. A physical source yields raw noise. An
+accumulation and conditioning stage collects, mixes, and health-tests that noise and estimates
+its entropy. A DRBG stretches the conditioned seed into output, and the output instantiates keys or
+nonces at a cryptographic interface. Conditioning with a hash cannot manufacture entropy:
+passing a low-entropy seed through SHA-256 yields output that looks uniform but ranges over no
+more values than the seed did~\cite{rfc4086,aumasson2024serious}. Unpredictability is a property of the input
+distribution, not of the output's statistics.
+
+\subsection{Security goals and threat model}
+Following the robustness literature~\cite{dodis2013devrandom}, a secure generator should provide
+\emph{resilience} (output is unpredictable when the adversary influences but does not know the
+entropy inputs), \emph{forward security} (a state compromise does not expose past output), and
+\emph{backward security} or prediction resistance (a state compromise does not expose future
+output once enough fresh entropy is absorbed). Deployed failures correspond to violations of
+these goals, and we group the adversaries that cause them into five models used throughout the
+paper. The \emph{offline predictor} (T1) knows or can enumerate the low-entropy inputs to
+seeding and reconstructs outputs without touching the target, as in Debian OpenSSL, Milk Sad,
+and boot-time key generation. The \emph{state-recovery adversary} (T2) learns or
+fixes internal state and rolls generation forward, as in DUHK and virtual-machine
+reset~\cite{cohney2018duhk,ristenpart2010vmreset}. The \emph{consumption adversary} (T3)
+exploits reused or biased nonces and IVs produced at the interface, as in the PlayStation~3 and
+cryptocurrency nonce cases~\cite{fail0verflow2010ps3,breitner2019biased}. The \emph{subversion
+adversary} (T4) deliberately weakens a standard or product, as in \dualec{}~\cite{shumow2007dualec,bernstein2016dualec}.
+The \emph{integration adversary} (T5), which may be an accidental process rather than a
+malicious party, causes a build, configuration, or dependency change to substitute a weak path
+for a strong one, as in Debian OpenSSL, Juniper, and \coldcard{}.
+
+Orthogonal to what an adversary does is what access it needs, and this dimension turns out to
+govern how dangerous a randomness failure is in practice. We distinguish three levels. An
+\emph{A1 remote} adversary works only from public data, such as blockchain addresses or TLS
+certificates, and never touches the target. An \emph{A2 local} adversary has physical proximity
+or code execution on the device and can mount fault-injection or side-channel attacks. An
+\emph{A3 supply-chain} adversary influences the artifact before it reaches the victim, whether
+through a malicious component, a firmware implant, or an accidental build defect.
+Table~\ref{tab:threatmatrix} crosses these levels with the principal attack classes. Failures
+exploitable from public data alone (A1) need no per-victim effort, so a single defect can be
+harvested across a whole population, as in the Milk Sad, Ill Bloom, and \coldcard{} wallet
+thefts~\cite{milksad2023,coinspect2026illbloom,trm2026coldcard}.
+
+\begin{table}[t]
+\centering
+\caption{Attack classes against the randomness pipeline by required access. A1 remote (public
+data only), A2 local (physical or on-device code execution), A3 supply chain (pre-delivery
+influence). A1 attacks need no per-victim effort.}
+\label{tab:threatmatrix}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}l c c c@{}}
+\toprule
+\textbf{Attack class} & \textbf{A1} & \textbf{A2} & \textbf{A3} \\
+\midrule
+Offline seed enumeration      & \checkmark & \checkmark & \checkmark \\
+Nonce reuse / bias recovery   & \checkmark & \checkmark & -- \\
+Generator state recovery      & --        & \checkmark & \checkmark \\
+Fault injection on the source & --        & \checkmark & -- \\
+Side-channel state leakage    & --        & \checkmark & \checkmark \\
+Algorithmic back door         & --        & --        & \checkmark \\
+Build or integration bypass   & --        & --        & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Selection method}
+\label{sec:selection}
+We drew candidate incidents from three source classes: peer-reviewed analyses at security and
+cryptography venues, primary vendor advisories and standards documents, and, for the 2026
+wallet cases, the vendors' technical postmortems together with independent engineering
+analyses~\cite{coinspect2026illbloom,coinkite2026backgrounder,block2026coldcard}. An incident
+enters the corpus when three conditions hold: (i) its root cause is a predictable, reused,
+biased, leaked, or subverted random value; (ii) the weakness was present in deployed code,
+firmware, hardware, or a published standard, whether or not exploitation in the wild was
+reported; and (iii) its mechanism is documented well enough to assign a stage. We exclude
+laboratory demonstrations on non-deployed targets, failures whose randomness aspect is
+incidental (password guessing, brain wallets), and distinguishers with no deployment impact.
+Where several reports share one mechanism in one system, we keep the most thoroughly documented
+one. The result is twenty-eight incidents from 1996 to 2026 across browsers, TLS and SSH
+infrastructure, smart cards, game consoles, mobile platforms, virtualized servers, trusted
+platform modules, processors, and cryptocurrency wallets.
+
+The corpus is purposive. We did not run a systematic database search, and we chose incidents to
+cover failure mechanisms rather than to estimate how often each occurs. Every count in this
+paper therefore describes the corpus, not the population of deployed failures, and is reported
+as a count rather than a rate. Incidents that were never disclosed are absent by construction,
+which biases the corpus toward failures that were found, usually by exploitation or by
+measurement.

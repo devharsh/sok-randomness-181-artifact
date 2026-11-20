@@ -1,0 +1,112 @@
+% FC'27 SoK camera-ready: 20 pages + references and appendices, LNCS, named author block.
+% Ported from the AsiaCCS 2027 submission (src_driver_acm.latex) on 2026-09-20.
+% Compile: pdflatex main ; bibtex main ; pdflatex main ; pdflatex main
+\documentclass[runningheads]{llncs}
+
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{threeparttable}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric,arrows.meta,calc,fit,backgrounds,shapes.misc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
+
+% Typesetting robustness: let TeX stretch to avoid overfull lines with long identifiers
+\setlength{\emergencystretch}{2em}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\floatpagefraction}{0.8}
+
+% acmart compatibility: \Description carries figure alt text; llncs has no
+% equivalent, so absorb it (optional short form + mandatory long form).
+\newcommand{\Description}[2][]{}
+
+% ---- Convenience macros (ported unchanged) ----
+\newcommand{\coldcard}{\textsc{ColdCard}}
+\newcommand{\dualec}{\textsc{Dual\_EC\_DRBG}}
+\newcommand{\stage}[1]{\textsf{S#1}}
+\newcommand{\bits}[1]{$2^{#1}$}
+\newcommand{\etal}{et al.\@}
+\newcommand{\ie}{i.e.,\@}
+\newcommand{\eg}{e.g.,\@}
+\newcommand{\prevent}{\textbf{P}}
+\newcommand{\detect}{\textbf{D}}
+\newcommand{\contain}{\textbf{C}}
+% Harvey balls for the remedy-coverage matrix (Table~\ref{tab:coverage}).
+\DeclareRobustCommand{\hbfull}{\tikz[baseline=-0.55ex]\fill (0,0) circle (0.42ex);}
+\DeclareRobustCommand{\hbhalf}{\tikz[baseline=-0.55ex]{\draw[line width=0.13ex] (0,0) circle (0.42ex);
+  \fill (0,0.42ex) arc (90:270:0.42ex) -- cycle;}}
+\DeclareRobustCommand{\hbnone}{\tikz[baseline=-0.55ex]\draw[line width=0.13ex] (0,0) circle (0.42ex);}
+\DeclareRobustCommand{\hbna}{\textcolor{black!35}{--}}
+
+\begin{document}
+
+% FC'27 requires SoK titles to begin with the literal text "SoK:".
+\title{SoK: Randomness Failures and Their Remedies in Deployed Cryptographic Systems}
+
+\titlerunning{SoK: Randomness Failures and Their Remedies}
+\author{Devharsh Trivedi\orcidID{0000-0001-6374-7249}}
+\authorrunning{D. Trivedi}
+\institute{Mathematics, Engineering and Computer Science,\\
+LaGuardia Community College, City University of New York,\\
+Long Island City, NY, USA\\
+\email{devharsh.trivedi86@lagcc.cuny.edu}}
+
+\maketitle
+
+\begin{abstract}
+In July 2026 attackers drained wallets whose seeds had been generated on \coldcard{} hardware
+devices, with published losses between about \$88 million and \$130 million. A build error had linked
+seed generation to a non-cryptographic software generator for more than five years. Published
+analyses disagree on how much entropy the seeds kept, from about 40 or 72 bits by the vendor's
+estimate to \bits{32} distinguishable outputs under Block's stronger assumptions, but all fall far
+short of 128 bits. The incident is the latest in a thirty-year record of randomness failures in
+TLS and SSH hosts, smart cards, virtual machines, processors, and wallets. This Systematization
+of Knowledge adopts the generator architecture of NIST SP 800-90 for the first five stages of a
+randomness pipeline and adds two loci the standards leave out: the consumption of random values
+by protocols, and the build and integration layer that decides which generator is actually
+linked. We code twenty-eight deployed incidents on this model and cross them with fourteen remedy
+families in a coverage matrix built by stated and released rules. Read by column, the matrix
+shows that statistical testing and certification prevent none of the failures, which confirms
+in the field a limit long known in principle, and that only build-path verification reaches the
+build and integration layer. Read by row, it shows that for 22 of the 24 preventable failures a
+preventing remedy was at least partly available when the system shipped. We close with open
+research questions tied to the empty parts of the matrix and a prioritized checklist for
+implementers.
+
+\keywords{Random number generation \and Entropy \and CSPRNG \and DRBG \and ECDSA nonces \and Hardware wallets \and Cryptographic engineering.}
+\end{abstract}
+
+\input{sections/01-intro.latex}
+\input{sections/02-background.latex}
+\input{sections/03-taxonomy.latex}
+\input{sections/04-incidents.latex}
+\input{sections/05-remedies.latex}
+\input{sections/06-effectiveness.latex}
+\input{sections/06b-related.latex}
+\input{sections/07-discussion.latex}
+\input{sections/08-conclusion.latex}
+
+\begin{credits}
+\subsubsection{\ackname} The author thanks the anonymous FC 2027 reviewers, whose comments
+shaped this version. The author used an AI assistant (Claude, Anthropic) for editing, reference
+checking, figure drafting, and the artifact scripts, and reviewed all content and takes
+responsibility for it.
+
+\subsubsection{\discintname} The author has no competing interests to declare that are relevant
+to the content of this article.
+\end{credits}
+
+\bibliographystyle{splncs04}
+\bibliography{references}
+
+\appendix
+\input{sections/09-appendix.latex}
+
+\end{document}

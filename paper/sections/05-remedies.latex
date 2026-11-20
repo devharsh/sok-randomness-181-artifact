@@ -1,0 +1,100 @@
+\section{Systematization of Remedies}
+\label{sec:remedies}
+
+We now organize the defenses the community has developed and map each to the stages it protects.
+Table~\ref{tab:remedies} summarizes fourteen remedy families, the stages they cover, whether they
+prevent, detect, or contain a failure, their residual risk, and the friction that governs their
+deployment. We then isolate the assurance blind spot that the coverage matrix makes visible.
+
+\begin{table}[tp]
+\centering
+\caption{Fourteen remedy families mapped to the pipeline. Mode: \prevent{} prevents the failure,
+\detect{} detects it, \contain{} limits its blast radius. Friction is the practical barrier to
+adoption: Lo, a library or platform default exists; Med, it needs configuration or platform
+support; Hi, it needs new tooling, hardware, or user action. No family covers every stage.}
+\label{tab:remedies}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.9cm} l c >{\raggedright\arraybackslash}p{4.2cm} c@{}}
+\toprule
+\textbf{Remedy family} & \textbf{Stages} & \textbf{Mode} & \textbf{Residual risk} & \textbf{Friction} \\
+\midrule
+R1 Vetted entropy source $+$ health tests~\cite{nist80090b} & \stage{1},\stage{2} & \prevent\,\detect & Opaque hardware source may still be weak or subverted (T4) & Med \\
+R2 Standardized CSPRNG/DRBG~\cite{nist80090a,kelsey1999yarrow} & \stage{3} & \prevent & Side-channel state recovery if misused~\cite{cohney2020blackswan} & Lo \\
+R3 Robust seeding, block until seeded~\cite{dodis2013devrandom,corrigangibbs2013ensuring} & \stage{1},\stage{4} & \prevent & Boot-time stalls tempt unsafe non-blocking calls & Med \\
+R4 Continuous reseed $+$ fork/VM hygiene~\cite{everspaugh2014whirlwind,ristenpart2010vmreset} & \stage{5} & \prevent\,\contain & Requires host cooperation (virtio-rng, fork hooks) & Med \\
+R5 Hedged nonces (RFC 6979 $+$ noise)~\cite{rfc6979,bernstein2012ed25519,cfrg2025hedged} & \stage{6} & \prevent & Pure determinism aids fault/side-channel attacks & Lo \\
+R6 Hedged/derandomized crypto~\cite{bellare2009hedged} & \stage{4}--\stage{6} & \prevent\,\contain & Not yet default in most libraries and protocols & Med \\
+R7 Threshold keygen, public randomness beacons & \stage{4},\stage{6} & \prevent\,\contain & Coordination cost; wrong trust model for local key custody & Hi \\
+R8 Statistical tests $+$ certification~\cite{nist80090b} & \stage{1}--\stage{3} & \detect & \textbf{Blind to uniform-but-predictable and uniform-but-chosen output} & Med \\
+R9 Reproducible builds, RNG boot self-test, attestation~\cite{coinkite2026backgrounder} & \stage{$\ast$} & \prevent\,\detect & Immature tooling; self-test must exercise the real path & Hi \\
+R10 User entropy $+$ passphrase (dice, BIP-39)~\cite{bip39} & \stage{1},\stage{4} & \prevent\,\contain & Depends on user diligence; poor default & Hi \\
+R11 Formal verification of RNG code & \stage{2},\stage{3},\stage{5} & \prevent & Specifications may omit the deployed threat (\stage{$\ast$}) & Hi \\
+R12 Tamper/environmental sensors, fail-closed~\cite{ledger2026coldcard} & \stage{1},\stage{2} & \prevent\,\detect & Protects the source, not the wiring that selects it & Med \\
+R13 Verifiable entropy protocols (commit-reveal)~\cite{trezor2025entropycheck} & \stage{1},\stage{4},\stage{$\ast$} & \prevent\,\detect & Needs a host verifier; covers keygen, not later use & Med \\
+R14 Anti-exfil / sign-to-contract nonces~\cite{bitbox2019antiklepto,blockstream2020antiexfil} & \stage{6} & \prevent & Needs host support; per-signature protocol cost & Med \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+Appendix~\ref{app:remedystage} discusses the families stage by stage. Here we concentrate on the
+finding that the coverage matrix makes unavoidable.
+
+\subsection{The assurance blind spot}
+\label{sec:blindspot}
+That statistical testing cannot establish unpredictability is well
+known~\cite{aumasson2024serious,nist80090b}: the hash of a counter passes every battery. The
+corpus shows how this limit plays out in deployment. Batteries such as the NIST suite, Dieharder,
+and TestU01, and the certification regimes built on them, judge a generator by its output
+distribution. The continuous health tests that SP 800-90B requires, the repetition count test
+and the adaptive proportion test, catch a source that is stuck or drifting~\cite{nist80090b}, and
+a check on the returned values would flag the zeros of AMD's \texttt{RDSEED}. These tests run on
+the noise source, however, so they certify that the source is alive, not that key generation
+consulted it. In the coverage matrix (Table~\ref{tab:coverage}), R8 prevents none of the
+twenty-eight incidents and detects only the two that are statistically visible, MIFARE and
+\texttt{RDSEED}. It is blind to output that is uniform but predictable, as in \dualec{}, Milk Sad,
+and \coldcard{}, and to output that is uniform but adversarially chosen
+(Appendix~\ref{sec:covert})~\cite{bernstein2016dualec,checkoway2014dualec,milksad2023,coinkite2026backgrounder}.
+Unpredictability is a property of the input distribution and of the wiring, so it has to be
+established structurally: by removing randomness from the security argument where the primitive
+allows (R5, R6), by verifying that the deployed path reaches the intended source (R9), and by
+vetting the source itself (R1).
+
+\subsection{A prioritized checklist for implementers}
+\label{sec:checklist}
+We order the items by the coverage matrix of Section~\ref{sec:effectiveness}: first the family
+that prevents the build and integration failures, which no other family reaches, then the
+families that prevent the most corpus incidents, and last those that only detect or contain.
+
+\begin{enumerate}[leftmargin=*,itemsep=1pt,topsep=2pt]
+\item \textbf{Bind the build to the intended source, and the binary to reviewed source.} Make the
+absence of the hardware generator a compile-time error rather than a runtime fallback, and publish
+reproducible builds. These measures form R9, the only family that prevents the three
+\stage{$\ast$} failures in the
+corpus~\cite{yilek2009debian,checkoway2016juniper,coinkite2026backgrounder}.
+\item \textbf{Test the real path at power-on.} Run a known-answer test that exercises the
+deployed entropy path and halts the device on failure.
+\item \textbf{Use the platform's vetted CSPRNG, never a general-purpose PRNG.} R2 prevents nine
+corpus incidents, from MIFARE to Ill Bloom~\cite{nist80090a}.
+\item \textbf{Block until seeded, and reseed on fork, snapshot, and resume.} R3 and R4 prevent
+eight and three corpus incidents~\cite{dodis2013devrandom,everspaugh2014whirlwind}.
+\item \textbf{Use hedged nonces.} Derive signature nonces deterministically and fold in fresh
+secret noise~\cite{rfc6979,cfrg2025hedged}. R5 prevents four corpus incidents, but not the timing
+leaks of Minerva and TPM-Fail, which need constant-time code.
+\item \textbf{Hedge what remains.} Derive key material from the secret, the input, and the
+available randomness together, so that security survives one weak input~\cite{bellare2009hedged}.
+\item \textbf{Adopt anti-exfil signing.} Where a host is present, use sign-to-contract so the
+device cannot choose the nonce alone~\cite{bitbox2019antiklepto,blockstream2020antiexfil}.
+\item \textbf{Verify that the combiner consumes every source.} Mixing helps only if each input
+reaches the state, so audit the width of the reseed path~\cite{block2026coldcard}.
+\item \textbf{Let the user add entropy.} Dice or an equivalent input, plus a passphrase, survives
+a total generator failure~\cite{bip39,coldcard2026dice}.
+\item \textbf{Offer a proof of freshness.} Where a host is present at key generation, use a
+commit-reveal entropy check~\cite{trezor2025entropycheck}.
+\item \textbf{Harden the source physically} where the threat model includes physical
+access~\cite{ledger2026coldcard,martin2015strng}.
+\item \textbf{Plan for migration.} A patch cannot repair an existing key, so prepare the tooling
+and instructions for moving to new keys before they are needed.
+\end{enumerate}

@@ -1,0 +1,666 @@
+{
+  "schema_version": "1.0",
+  "count": 28,
+  "incidents": [
+    {
+      "id": "netscape1996",
+      "name": "Netscape SSL RNG",
+      "year": 1996,
+      "domain": "Browser/TLS",
+      "stages": [
+        "S4"
+      ],
+      "root_cause": "Seed derived from process ID, parent PID, and time of day",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "session_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "goldberg1996netscape"
+      ],
+      "source": "Dr. Dobb's Journal, Jan. 1996"
+    },
+    {
+      "id": "mifare2008",
+      "name": "MIFARE Crypto-1",
+      "year": 2008,
+      "domain": "Smart card/RFID",
+      "stages": [
+        "S3"
+      ],
+      "root_cause": "16-bit LFSR generator; challenges predictable",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "statistical",
+      "radius": "ecosystem",
+      "exploit_access": "A2",
+      "target_secret": "session_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "garcia2008mifare",
+        "nohl2008rfid"
+      ],
+      "source": "ESORICS 2008; USENIX Security 2008"
+    },
+    {
+      "id": "debian2008",
+      "name": "Debian OpenSSL",
+      "year": 2008,
+      "domain": "TLS/SSH",
+      "stages": [
+        "S*"
+      ],
+      "root_cause": "Downstream patch removed entropy input; ~15-bit key space",
+      "adversary": [
+        "T1",
+        "T5"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": "CVE-2008-0166",
+      "dwell_years": "2.0",
+      "citation_keys": [
+        "yilek2009debian"
+      ],
+      "source": "IMC 2009, doi:10.1145/1644893.1644896"
+    },
+    {
+      "id": "ps3_2010",
+      "name": "PlayStation 3 ECDSA",
+      "year": 2010,
+      "domain": "Game console",
+      "stages": [
+        "S6"
+      ],
+      "root_cause": "Constant per-signature nonce",
+      "adversary": [
+        "T3"
+      ],
+      "observability": "external",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "ephemeral_nonce",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "fail0verflow2010ps3"
+      ],
+      "source": "27th Chaos Communication Congress, 2010"
+    },
+    {
+      "id": "vmreset2010",
+      "name": "Virtual machine reset",
+      "year": 2010,
+      "domain": "Virtualized TLS",
+      "stages": [
+        "S5"
+      ],
+      "root_cause": "Generator state cloned on snapshot or reset",
+      "adversary": [
+        "T2"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A1",
+      "target_secret": "session_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "ristenpart2010vmreset"
+      ],
+      "source": "NDSS 2010"
+    },
+    {
+      "id": "psandqs2012",
+      "name": "Mining Ps and Qs",
+      "year": 2012,
+      "domain": "TLS/SSH devices",
+      "stages": [
+        "S1"
+      ],
+      "root_cause": "Low boot-time entropy; shared keys and common factors",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "heninger2012mining"
+      ],
+      "source": "USENIX Security 2012"
+    },
+    {
+      "id": "ronwrong2012",
+      "name": "Shared RSA factors",
+      "year": 2012,
+      "domain": "TLS PKI",
+      "stages": [
+        "S1"
+      ],
+      "root_cause": "Low-entropy key generation; colliding primes",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "lenstra2012ron"
+      ],
+      "source": "IACR ePrint 2012/064"
+    },
+    {
+      "id": "php2012",
+      "name": "PHP application tokens",
+      "year": 2012,
+      "domain": "Web applications",
+      "stages": [
+        "S3"
+      ],
+      "root_cause": "Non-cryptographic PRNG for security tokens",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "session_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "argyros2012php"
+      ],
+      "source": "USENIX Security 2012"
+    },
+    {
+      "id": "dualec2007",
+      "name": "Dual_EC_DRBG back door",
+      "year": 2007,
+      "domain": "Standard",
+      "stages": [
+        "S3"
+      ],
+      "root_cause": "Kleptographic constants in standardized DRBG",
+      "adversary": [
+        "T4"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A3",
+      "target_secret": "generator_state",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "shumow2007dualec",
+        "bernstein2016dualec"
+      ],
+      "source": "CRYPTO 2007 rump; The New Codebreakers 2016"
+    },
+    {
+      "id": "android2013",
+      "name": "Android SecureRandom",
+      "year": 2013,
+      "domain": "Mobile wallet",
+      "stages": [
+        "S3",
+        "S6"
+      ],
+      "root_cause": "Unseeded PRNG leading to repeated ECDSA nonces",
+      "adversary": [
+        "T3"
+      ],
+      "observability": "external",
+      "radius": "fleet",
+      "exploit_access": "A1",
+      "target_secret": "ephemeral_nonce",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "michaelis2013randomly"
+      ],
+      "source": "CT-RSA 2013, doi:10.1007/978-3-642-36095-4_9"
+    },
+    {
+      "id": "devrandom2013",
+      "name": "/dev/random robustness",
+      "year": 2013,
+      "domain": "OS RNG",
+      "stages": [
+        "S2"
+      ],
+      "root_cause": "Entropy accounting not robust under the formal model",
+      "adversary": [
+        "T2"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A2",
+      "target_secret": "generator_state",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "dodis2013devrandom"
+      ],
+      "source": "ACM CCS 2013, doi:10.1145/2508859.2516653"
+    },
+    {
+      "id": "dualectls2014",
+      "name": "Dual EC in TLS products",
+      "year": 2014,
+      "domain": "TLS products",
+      "stages": [
+        "S3"
+      ],
+      "root_cause": "Standardized back door shown practically exploitable",
+      "adversary": [
+        "T4"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A3",
+      "target_secret": "generator_state",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "checkoway2014dualec"
+      ],
+      "source": "USENIX Security 2014"
+    },
+    {
+      "id": "btcnonce2014",
+      "name": "Bitcoin ECDSA nonce reuse",
+      "year": 2014,
+      "domain": "Blockchain",
+      "stages": [
+        "S6"
+      ],
+      "root_cause": "Repeated ECDSA nonces observable on the public ledger",
+      "adversary": [
+        "T3"
+      ],
+      "observability": "external",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "ephemeral_nonce",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "bos2014ecc"
+      ],
+      "source": "FC 2014, doi:10.1007/978-3-662-45472-5_11"
+    },
+    {
+      "id": "whirlwind2014",
+      "name": "Not-so-random numbers in virtualized Linux",
+      "year": 2014,
+      "domain": "Virtualized OS",
+      "stages": [
+        "S5"
+      ],
+      "root_cause": "VM fork reuses generator state",
+      "adversary": [
+        "T2"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A1",
+      "target_secret": "generator_state",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "everspaugh2014whirlwind"
+      ],
+      "source": "IEEE S&P 2014, doi:10.1109/SP.2014.42"
+    },
+    {
+      "id": "juniper2016",
+      "name": "Juniper Dual EC incident",
+      "year": 2016,
+      "domain": "VPN",
+      "stages": [
+        "S3",
+        "S*"
+      ],
+      "root_cause": "Back door plus attacker-substituted curve constant",
+      "adversary": [
+        "T4",
+        "T5"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A3",
+      "target_secret": "generator_state",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "checkoway2016juniper"
+      ],
+      "source": "ACM CCS 2016, doi:10.1145/2976749.2978395"
+    },
+    {
+      "id": "opensslrng2016",
+      "name": "OpenSSL RNG design weaknesses",
+      "year": 2016,
+      "domain": "TLS library",
+      "stages": [
+        "S5"
+      ],
+      "root_cause": "Fork-safety and internal state weaknesses",
+      "adversary": [
+        "T2"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A2",
+      "target_secret": "generator_state",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "strenzke2016openssl"
+      ],
+      "source": "EUROCRYPT 2016, doi:10.1007/978-3-662-49890-3_25"
+    },
+    {
+      "id": "roca2017",
+      "name": "ROCA (Infineon RSALib)",
+      "year": 2017,
+      "domain": "Smart-card key generation",
+      "stages": [
+        "S4"
+      ],
+      "root_cause": "Structured primes reduce effective entropy; Coppersmith factorization",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "statistical",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "nemec2017roca"
+      ],
+      "source": "ACM CCS 2017, doi:10.1145/3133956.3133969"
+    },
+    {
+      "id": "duhk2018",
+      "name": "DUHK",
+      "year": 2018,
+      "domain": "VPN and FIPS appliances",
+      "stages": [
+        "S4",
+        "S5"
+      ],
+      "root_cause": "Hardcoded X9.31 seed key enabling state recovery",
+      "adversary": [
+        "T2"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A1",
+      "target_secret": "generator_state",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "cohney2018duhk"
+      ],
+      "source": "ACM CCS 2018, doi:10.1145/3243734.3243756"
+    },
+    {
+      "id": "biasednonce2019",
+      "name": "Biased Nonce Sense",
+      "year": 2019,
+      "domain": "Blockchain",
+      "stages": [
+        "S6"
+      ],
+      "root_cause": "Short or biased ECDSA nonces; lattice key recovery",
+      "adversary": [
+        "T3"
+      ],
+      "observability": "external",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "ephemeral_nonce",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "breitner2019biased"
+      ],
+      "source": "FC 2019, doi:10.1007/978-3-030-32101-7_1"
+    },
+    {
+      "id": "minerva2020",
+      "name": "Minerva",
+      "year": 2020,
+      "domain": "Smart-card ECDSA",
+      "stages": [
+        "S6"
+      ],
+      "root_cause": "Nonce bit-length leaks via timing",
+      "adversary": [
+        "T3"
+      ],
+      "observability": "statistical",
+      "radius": "fleet",
+      "exploit_access": "A2",
+      "target_secret": "ephemeral_nonce",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "jancar2020minerva"
+      ],
+      "source": "TCHES 2020(4), doi:10.13154/tches.v2020.i4.281-308"
+    },
+    {
+      "id": "tpmfail2020",
+      "name": "TPM-Fail",
+      "year": 2020,
+      "domain": "TPM ECDSA",
+      "stages": [
+        "S6"
+      ],
+      "root_cause": "Nonce leakage via timing; lattice key recovery",
+      "adversary": [
+        "T3"
+      ],
+      "observability": "statistical",
+      "radius": "fleet",
+      "exploit_access": "A2",
+      "target_secret": "ephemeral_nonce",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "moghimi2020tpmfail"
+      ],
+      "source": "USENIX Security 2020"
+    },
+    {
+      "id": "blackswan2020",
+      "name": "CTR_DRBG pseudorandom black swans",
+      "year": 2020,
+      "domain": "TLS libraries",
+      "stages": [
+        "S3",
+        "S5"
+      ],
+      "root_cause": "Missing reseed plus cache side channel enabling state recovery",
+      "adversary": [
+        "T2"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A2",
+      "target_secret": "generator_state",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "cohney2020blackswan"
+      ],
+      "source": "IEEE S&P 2020, doi:10.1109/SP40000.2020.00046"
+    },
+    {
+      "id": "trustwallet2022",
+      "name": "Trust Wallet browser extension",
+      "year": 2022,
+      "domain": "Browser wallet",
+      "stages": [
+        "S3",
+        "S4"
+      ],
+      "root_cause": "Weak generator; private key derivable from the public address",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "ledger2023trustwallet"
+      ],
+      "source": "Ledger Donjon disclosure"
+    },
+    {
+      "id": "profanity2022",
+      "name": "Profanity vanity address generator",
+      "year": 2022,
+      "domain": "Ethereum key tool",
+      "stages": [
+        "S4"
+      ],
+      "root_cause": "32-bit seed for GPU key search; generator state reconstructable",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "1inch2022profanity"
+      ],
+      "source": "1inch disclosure, 2022"
+    },
+    {
+      "id": "milksad2023",
+      "name": "Milk Sad (Libbitcoin Explorer bx seed)",
+      "year": 2023,
+      "domain": "Wallet CLI",
+      "stages": [
+        "S3",
+        "S4"
+      ],
+      "root_cause": "Mersenne Twister MT19937 seeded from a 32-bit system clock value",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": "CVE-2023-39910",
+      "dwell_years": null,
+      "citation_keys": [
+        "milksad2023"
+      ],
+      "source": "CVE-2023-39910; milksad.info"
+    },
+    {
+      "id": "amdrdseed2025",
+      "name": "AMD Zen 5 RDSEED failure",
+      "year": 2025,
+      "domain": "CPU instruction",
+      "stages": [
+        "S1"
+      ],
+      "root_cause": "16- and 32-bit RDSEED return 0 while incorrectly signaling success",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "statistical",
+      "radius": "ecosystem",
+      "exploit_access": "A2",
+      "target_secret": "long_term_key",
+      "cve": "CVE-2025-62626",
+      "dwell_years": null,
+      "citation_keys": [
+        "amd2025rdseed"
+      ],
+      "source": "AMD-SB-7055; CVE-2025-62626"
+    },
+    {
+      "id": "illbloom2026",
+      "name": "Ill Bloom",
+      "year": 2026,
+      "domain": "Software wallets",
+      "stages": [
+        "S3",
+        "S4"
+      ],
+      "root_cause": "Weak CryptoJS PRNG used for BIP-39 recovery phrase generation",
+      "adversary": [
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "ecosystem",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": null,
+      "dwell_years": null,
+      "citation_keys": [
+        "coinspect2026illbloom"
+      ],
+      "source": "Coinspect disclosure; illbloom.org"
+    },
+    {
+      "id": "coldcard2026",
+      "name": "ColdCard seed generation",
+      "year": 2026,
+      "domain": "Hardware wallet",
+      "stages": [
+        "S*",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "root_cause": "Symbol collision linked seed generation to a non-cryptographic software PRNG",
+      "adversary": [
+        "T5",
+        "T1"
+      ],
+      "observability": "silent",
+      "radius": "fleet",
+      "exploit_access": "A1",
+      "target_secret": "long_term_key",
+      "cve": null,
+      "dwell_years": "5.3",
+      "citation_keys": [
+        "coinkite2026backgrounder",
+        "block2026coldcard"
+      ],
+      "source": "Coinkite backgrounder; Block engineering analysis"
+    }
+  ]
+}

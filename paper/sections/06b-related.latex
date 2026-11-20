@@ -1,0 +1,39 @@
+\section{Related Work}
+\label{sec:related}
+Prior work on random number generation falls into four strands that this systematization draws
+on and connects.
+
+\textbf{Standards and theory.} The foundations are set by standards and by the theory of robust
+generators: RFC 4086, the NIST SP 800-90 series, the Yarrow design, and the robustness model of
+Dodis \etal{} define what a sound generator is and how to build
+one~\cite{rfc4086,nist80090a,nist80090b,nist80090c,kelsey1999yarrow,dodis2013devrandom}. We adopt
+their decomposition for stages \stage{1} to \stage{5} and use them as the backbone of the remedy
+catalog. Textbooks already stress that statistical tests cannot certify cryptographic
+randomness~\cite{aumasson2024serious}. We add the deployed evidence for that limit.
+
+\textbf{Population measurement.} A second strand measures a single failure class at Internet
+scale: weak keys from low boot-time entropy, RSA moduli that share a prime, and reused ECDSA
+nonces mined from public ledgers~\cite{heninger2012mining,lenstra2012ron,bos2014ecc}. These
+quantify individual mechanisms with rigor. We generalize across mechanisms and add the remedy and
+counterfactual dimensions.
+
+\textbf{Single-incident analyses.} A third strand dissects individual incidents in depth: the
+Debian defect, the \dualec{} and Juniper affair, ROCA, DUHK, the CTR\_DRBG cache attacks,
+TPM-Fail, Minerva, and OpenSSL fork-safety~\cite{yilek2009debian,checkoway2016juniper,nemec2017roca,cohney2018duhk,cohney2020blackswan,moghimi2020tpmfail,jancar2020minerva,strenzke2016openssl}.
+Our contribution is to place these on a common taxonomy and to ask, uniformly, which deployed
+remedy would have prevented each.
+
+\textbf{Construction surveys.} A fourth strand surveys generator constructions and their testing
+within a domain, most comprehensively for the IoT~\cite{kietzmann2021prng}. Such surveys organize
+algorithms and statistical batteries. They do not systematize deployed \emph{failures}, and, being
+construction-centric, they do not model the build and integration surface (\stage{$\ast$}) that
+produced the Debian and \coldcard{} incidents.
+
+\textbf{Positioning.} To our knowledge no prior work places deployed randomness failures from
+browsers, TLS, and SSH through smart cards, consoles, mobile platforms, virtualization, and trusted
+platform modules to wallets on one stage model that includes consumption and the build surface,
+and grades every incident against the same remedy catalog under stated rules. The hedged and derandomized cryptography
+line gives the structural defenses we find most
+effective~\cite{bellare2009hedged,rfc6979,bernstein2012ed25519,ristenpart2010vmreset,corrigangibbs2013ensuring}.
+We situate those defenses within the broader remedy space and test them against the incident
+record.

@@ -1,0 +1,15 @@
+id,name,stages,mode,friction,residual_risk
+R1,Vetted entropy source with health tests,S1;S2,prevent;detect,medium,Opaque hardware source may still be weak or subverted
+R2,Standardized CSPRNG/DRBG,S3,prevent,low,Side-channel state recovery if misused
+R3,"Robust seeding, block until seeded",S1;S4,prevent,medium,Boot-time stalls tempt unsafe non-blocking calls
+R4,Continuous reseed with fork and VM hygiene,S5,prevent;contain,medium,Requires host cooperation
+R5,"Hedged nonces (RFC 6979 plus noise), EdDSA",S6,prevent,low,Pure determinism assists fault and side-channel attacks
+R6,Hedged or derandomized constructions,S4;S5;S6,prevent;contain,medium,Not yet default in most libraries and protocols
+R7,"Threshold key generation, randomness beacons",S4;S6,prevent;contain,high,Coordination cost; wrong trust model for local custody
+R8,Statistical tests and certification,S1;S2;S3,detect,medium,Blind to predictable-but-uniform and adversarially-chosen-but-uniform output
+R9,"Reproducible builds, RNG boot self-test, attestation",S*,prevent;detect,high,Immature tooling; self-test must exercise the real path
+R10,"User entropy and passphrase (dice, BIP-39)",S1;S4,prevent;contain,high,Depends on user diligence; poor default
+R11,Formal verification of RNG code,S2;S3;S5,prevent,high,Specifications may omit the deployed threat
+R12,"Tamper and environmental sensors, fail-closed",S1;S2,prevent;detect,medium,"Protects the source, not the wiring that selects it"
+R13,Verifiable entropy protocols (commit-reveal),S1;S4;S*,prevent;detect,medium,Needs a host verifier; covers key generation only
+R14,Anti-exfil / sign-to-contract nonces,S6,prevent,medium,Needs host support; per-signature protocol cost

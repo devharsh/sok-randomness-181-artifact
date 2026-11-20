@@ -1,0 +1,12 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We placed twenty-eight deployed randomness failures, from Netscape in 1996 to the 2026 wallet
+thefts, on a pipeline that follows SP 800-90 for the generator and adds consumption and the build
+and integration surface, and we graded each against fourteen remedy families under stated rules.
+The matrix shows that statistical testing and certification prevent none of these failures, that
+only build-path verification guards the build surface, and that for most incidents a preventing
+remedy existed before the system shipped. The research problems lie where the matrix is empty:
+verifying the build path, certifying unpredictability rather than uniformity, and bringing
+implementation security into randomness assurance. The practical problem is one of defaults,
+tooling, and incentives.

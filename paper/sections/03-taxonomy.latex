@@ -1,0 +1,141 @@
+\section{A Taxonomy of Randomness Failures}
+\label{sec:taxonomy}
+
+We organize failures by \emph{where in the generator} the fault occurs. For the generator itself
+we adopt the decomposition of the NIST SP 800-90 series rather than proposing a new one
+(Figure~\ref{fig:pipeline}). The entropy source and its conditioning (\stage{1}, \stage{2})
+correspond to SP 800-90B~\cite{nist80090b}. The deterministic generator, its instantiation, and
+its reseeding and internal state (\stage{3} to \stage{5}) correspond to the DRBG mechanisms of
+SP 800-90A~\cite{nist80090a}. SP 800-90C specifies how validated components are assembled into a
+complete random bit generator~\cite{nist80090c}. Our contribution at this level is limited to
+two loci that the series leaves out and that recur in the deployed record. The first is
+consumption (\stage{6}): how a protocol uses the values it receives, which is where signature
+nonces fail. The second is the build and integration surface (\stage{$\ast$}): SP 800-90 concerns
+the design of each component and of their composition, whereas whether a shipped artifact
+actually invokes the validated components is decided by the build, which lies outside its scope.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/taxonomy_pipeline.pdf}
+\caption{The randomness pipeline. Stages \stage{1} to \stage{5} follow the NIST SP 800-90
+series, as the bands above them show. Consumption (\stage{6}) and the cross-cutting build and
+integration surface (\stage{$\ast$}) lie outside it. Under each stage are corpus incidents whose
+primary cause lies there (Table~\ref{tab:incidents}). \stage{$\ast$} can replace the component
+at any stage without changing the stage's own design.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{The six pipeline stages}
+We take the stages in order, from the physical origin of unpredictability to its consumption at
+the cryptographic interface. Each plays a distinct role in turning raw noise into usable key
+material, and each fails in a characteristic way that the rest of the paper ties to concrete
+incidents.
+
+\textbf{\stage{1} Entropy source.} The physical or operating-system origin of unpredictability.
+Failures here are quantitative: no source is present, the source is biased or low-rate, its
+output is environmentally predictable, or, most commonly in the field, insufficient entropy has
+accumulated at the moment of first use. Embedded and headless devices that generate keys
+seconds after boot, before interrupts and disk timings have stirred the pool, are the recurring
+victims~\cite{heninger2012mining,everspaugh2014whirlwind}. The source can also simply be broken
+in silicon: AMD disclosed in 2025 that the 16-bit and 32-bit forms of the \texttt{RDSEED}
+instruction on Zen 5 processors return zero at a rate inconsistent with randomness while
+incorrectly signaling success, so software that trusts the success flag consumes a fixed value
+believing it to be fresh entropy~\cite{amd2025rdseed}.
+
+\textbf{\stage{2} Accumulation and conditioning.} Raw noise must be collected, mixed,
+health-tested, and its entropy estimated before use. Failures include the absence of on-line
+health tests, over-estimation of the entropy actually gathered, and the fallacy that hashing or
+whitening adds entropy. Conditioning changes the \emph{statistics} of a value but never enlarges
+the set of values it can take~\cite{rfc4086,aumasson2024serious}.
+
+\textbf{\stage{3} Generation algorithm.} The deterministic core that stretches a seed into
+output. Failures are qualitative: a non-cryptographic generator is used where a CSPRNG is
+required, such as a linear congruential generator, the Mersenne Twister of Milk Sad, or the LFSR
+of MIFARE Crypto-1. The algorithm may also contain a deliberate back door (\dualec{}), or a
+standardized algorithm may admit state recovery under realistic side channels, as cache attacks
+on CTR\_DRBG showed~\cite{milksad2023,garcia2008mifare,bernstein2016dualec,cohney2020blackswan}.
+
+\textbf{\stage{4} Seeding and instantiation.} A sound DRBG is only as strong as the entropy that
+instantiates it. Failures include predictable seeds derived from a process identifier and clock,
+low-entropy seeds of a few bits, static or hardcoded seeds, seeds shorter than the security
+level, and identical seeds shipped across a device fleet~\cite{goldberg1996netscape,yilek2009debian,cohney2018duhk}.
+
+\textbf{\stage{5} State lifecycle.} Once running, a generator must reseed, resist state
+compromise, and never repeat state. Failures include never reseeding, cloning state when a
+virtual machine is reset or snapshotted, restoring a persisted state file, forward-security gaps,
+and reseed operations that inject too few bits to matter. Resetting a virtual machine to a
+snapshot replays the generator state, so two sessions reuse the same randomness, and a forked
+process that does not reseed does the same inside a
+library~\cite{ristenpart2010vmreset,strenzke2016openssl}.
+
+\textbf{\stage{6} Consumption.} Even a perfect generator fails if the consumer misuses it. The
+dominant case is the signature nonce: ECDSA and DSA leak the private key if the per-signature
+nonce repeats or is even slightly biased, and this has recurred from the PlayStation~3 to
+production cryptocurrency wallets~\cite{fail0verflow2010ps3,bos2014ecc,breitner2019biased}. IV
+reuse, requesting fewer random bytes than a primitive needs, and insecure API defaults belong
+here too. This stage also hosts a failure mode with the opposite character, in which the nonce is
+not weak at all but chosen adversarially to encode a secret, turning a random-looking field into
+an exfiltration channel. We treat it separately in Section~\ref{sec:covert} because it defeats
+every defense aimed at entropy quality.
+
+\subsection{The cross-cutting build and integration surface}
+Real systems are assembled: sources are selected by build flags, algorithms are pulled from
+dependencies, and the wiring between them is decided by configuration and toolchains. We treat
+this surface, \stage{$\ast$}, as a failure locus of its own. Its failure modes are a symbol
+collision that resolves a call to the wrong implementation, a build flag that disables the
+intended source without stopping the build, a downstream patch that removes an entropy input,
+and a substituted constant or component. Its defining property is that no stage is individually
+wrong, yet the shipped artifact is broken, so review and testing of each component pass. Three
+corpus incidents sit here. The 2008 Debian patch deleted the line that mixed entropy into
+OpenSSL's pool~\cite{yilek2009debian}. In Juniper ScreenOS, an unauthorized code change replaced
+the \dualec{} constant and a coding error exposed raw \dualec{} output~\cite{checkoway2016juniper}.
+In \coldcard{}, a symbol collision linked seed generation to a software
+generator~\cite{coinkite2026backgrounder}. The surface overlaps with software supply-chain
+security, but its consequence for randomness is specific: the substitution changes no interface
+and no output statistic, so it survives the checks aimed at the internal stages
+(Section~\ref{sec:blindspot}).
+
+\subsection{Accidental versus induced failure}
+\label{sec:induced}
+Most corpus incidents are accidental. Every stage can also be driven into failure deliberately,
+and laboratory work shows how, although such demonstrations are outside our corpus of deployed
+incidents. Mart{\'i}n \etal{}~\cite{martin2015strng} show that clock glitches, temperature
+manipulation, and underpowering measurably reduce the randomness of true random number
+generators, and Bayon \etal{}~\cite{bayon2012em} lock the oscillators of a ring-oscillator
+generator with contactless electromagnetic injection. Both are \stage{1} attacks by a local (A2)
+adversary. Mavroudis \etal{}~\cite{mavroudis2017touch} start from the premise that individual
+cryptographic chips may be subverted (A3) and build systems whose security survives a minority
+of bad components. Induced and accidental failures land on the same stages and are exploited
+the same way, so one taxonomy serves both. The difference is in the defenses: fault and
+supply-chain resistance need physical countermeasures that code review cannot supply.
+
+\subsection{Coding dimensions}
+\label{sec:coding}
+Each incident is coded on the dimensions of Table~\ref{tab:dimensions}. Each dimension answers
+one question, and the later tables reuse the same codes, so an incident can be followed from
+Table~\ref{tab:incidents} to the coverage matrix of Section~\ref{sec:effectiveness}.
+
+\begin{table}[t]
+\centering
+\caption{Coding dimensions used throughout the paper. Stage, adversary, access, observability,
+and radius describe an incident. Remedy family and mode describe a defense. The coverage grade
+and availability join the two.}
+\label{tab:dimensions}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}p{2.15cm} p{3.55cm} p{4.4cm} l@{}}
+\toprule
+\textbf{Dimension} & \textbf{Values} & \textbf{Question it answers} & \textbf{Used in} \\
+\midrule
+Stage & \stage{1}--\stage{6}, \stage{$\ast$} & Where does the cause lie? & Tab.~\ref{tab:incidents}, \ref{tab:coverage} \\
+Adversary & T1 predictor, T2 state recovery, T3 consumption, T4 subversion, T5 integration & How is the weakness exploited? & Tab.~\ref{tab:incidents} \\
+Access & A1 remote, A2 local, A3 supply chain & What must the attacker have? & Tab.~\ref{tab:threatmatrix}, \ref{tab:incidents} \\
+Observability & silent, statistical, external & Could output testing or public monitoring see it before exploitation? & Tab.~\ref{tab:incidents}, \ref{tab:coverage} \\
+Blast radius & device, fleet, ecosystem & How many systems does one defect reach? & Tab.~\ref{tab:incidents} \\
+Remedy, mode & R1--R14; prevent, detect, contain & Which defense acts on the stage, and how? & Tab.~\ref{tab:remedies}, \ref{tab:coverage} \\
+Coverage grade & prevents, partial, no effect, not applicable & Would this remedy have stopped this incident? & Tab.~\ref{tab:coverage} \\
+Availability & yes, partly, emerging, no & Did the preventing remedy exist when the system shipped? & Tab.~\ref{tab:coverage} \\
+\bottomrule
+\end{tabular}
+\end{table}

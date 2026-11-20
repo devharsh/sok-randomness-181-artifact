@@ -1,0 +1,636 @@
+% references.bib -- SoK: Randomness Failures and Their Remedies
+% All entries verified against primary/authoritative sources (see RESEARCH_NOTES.md).
+% ACM-Reference-Format / BibTeX. Titles double-braced to preserve capitalization.
+
+% ============================ ANCHOR CASE: ColdCard 2026 ============================
+@misc{coinkite2026backgrounder,
+  author       = {{Coinkite}},
+  title        = {{Technical Deep Dive into the Entropy Issue}},
+  howpublished = {Coinkite Blog},
+  year         = {2026},
+  note         = {\url{https://blog.coinkite.com/entropy-technical-backgrounder/}, accessed Aug. 2026}
+}
+
+@misc{coldcard2026dice,
+  author       = {{Coinkite}},
+  title        = {{Verifying Dice Roll Math}},
+  howpublished = {COLDCARD Documentation},
+  year         = {2026},
+  note         = {\url{https://coldcard.com/docs/verifying-dice-roll-math/}, accessed Aug. 2026}
+}
+
+@misc{coinkite2026advisory,
+  author       = {{Coinkite}},
+  title        = {{COLDCARD Seed Generation Security Advisory}},
+  howpublished = {Coinkite Blog},
+  year         = {2026},
+  note         = {\url{https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/}, accessed Aug. 2026}
+}
+
+@misc{block2026coldcard,
+  author       = {{Block, Inc. Engineering}},
+  title        = {{Predictable RNG Fallback and 32-Bit Reseed in COLDCARD Firmware}},
+  howpublished = {Block Engineering Blog},
+  year         = {2026},
+  note         = {\url{https://engineering.block.xyz/blog/predictable-rng-fallback-and-32-bit-reseed-in-coldcard-firmware}, accessed Aug. 2026}
+}
+
+@misc{trm2026coldcard,
+  author       = {{TRM Labs}},
+  title        = {{The Largest Hardware Wallet Exploit of 2026: Inside the \$116 Million COLDCARD Hack}},
+  howpublished = {TRM Labs Blog},
+  year         = {2026},
+  note         = {\url{https://www.trmlabs.com/resources/blog/the-largest-hardware-wallet-exploit-of-2026-inside-the-usd-116-million-coldcard-hack}, accessed Aug. 2026}
+}
+
+@misc{cbc2026coldcard,
+  author       = {{CBC News}},
+  title        = {{What We Know About the Ongoing Coldcard Hack That's Stolen Over \$100M Worth of Bitcoin}},
+  howpublished = {CBC News},
+  year         = {2026},
+  note         = {\url{https://www.cbc.ca/news/world/bitcoin-coinkite-security-hack-9.7295582}, accessed Aug. 2026}
+}
+
+@misc{thn2026coldcard,
+  author       = {{The Hacker News}},
+  title        = {{COLDCARD Hardware Wallet Flaw Linked to \$70 Million Bitcoin Theft in 41 Minutes}},
+  howpublished = {The Hacker News},
+  year         = {2026},
+  note         = {\url{https://thehackernews.com/2026/08/coldcard-hardware-wallet-flaw-linked-to.html}, accessed Aug. 2026}
+}
+
+% ============================ INCIDENTS AND ATTACKS ============================
+@inproceedings{yilek2009debian,
+  author    = {Yilek, Scott and Rescorla, Eric and Shacham, Hovav and Enright, Brandon and Savage, Stefan},
+  title     = {{When Private Keys are Public: Results from the 2008 Debian OpenSSL Vulnerability}},
+  booktitle = {Proceedings of the 9th ACM SIGCOMM Conference on Internet Measurement (IMC)},
+  year      = {2009},
+  pages     = {15--27},
+  doi       = {10.1145/1644893.1644896}
+}
+
+@inproceedings{heninger2012mining,
+  author    = {Heninger, Nadia and Durumeric, Zakir and Wustrow, Eric and Halderman, J. Alex},
+  title     = {{Mining Your Ps and Qs: Detection of Widespread Weak Keys in Network Devices}},
+  booktitle = {Proceedings of the 21st USENIX Security Symposium},
+  year      = {2012},
+  pages     = {205--220}
+}
+
+@misc{lenstra2012ron,
+  author       = {Lenstra, Arjen K. and Hughes, James P. and Augier, Maxime and Bos, Joppe W. and Kleinjung, Thorsten and Wachter, Christophe},
+  title        = {{Ron was Wrong, Whit is Right}},
+  howpublished = {Cryptology ePrint Archive, Paper 2012/064},
+  year         = {2012},
+  note         = {Published as ``Public Keys'' at CRYPTO 2012. \url{https://eprint.iacr.org/2012/064}}
+}
+
+@incollection{bernstein2016dualec,
+  author    = {Bernstein, Daniel J. and Lange, Tanja and Niederhagen, Ruben},
+  title     = {{Dual EC: A Standardized Back Door}},
+  booktitle = {The New Codebreakers},
+  series    = {LNCS},
+  volume    = {9100},
+  publisher = {Springer},
+  year      = {2016},
+  pages     = {256--281},
+  doi       = {10.1007/978-3-662-49301-4_17}
+}
+
+@inproceedings{checkoway2014dualec,
+  author    = {Checkoway, Stephen and Niederhagen, Ruben and Everspaugh, Adam and Green, Matthew and Lange, Tanja and Ristenpart, Thomas and Bernstein, Daniel J. and Maskiewicz, Jake and Shacham, Hovav and Fredrikson, Matthew},
+  title     = {{On the Practical Exploitability of Dual EC in TLS Implementations}},
+  booktitle = {Proceedings of the 23rd USENIX Security Symposium},
+  year      = {2014},
+  pages     = {319--335}
+}
+
+@inproceedings{checkoway2016juniper,
+  author    = {Checkoway, Stephen and Maskiewicz, Jacob and Garman, Christina and Fried, Joshua and Cohney, Shaanan and Green, Matthew and Heninger, Nadia and Weinmann, Ralf-Philipp and Rescorla, Eric and Shacham, Hovav},
+  title     = {{A Systematic Analysis of the Juniper Dual EC Incident}},
+  booktitle = {Proceedings of the 2016 ACM SIGSAC Conference on Computer and Communications Security (CCS)},
+  year      = {2016},
+  pages     = {468--479},
+  doi       = {10.1145/2976749.2978395}
+}
+
+@inproceedings{bos2014ecc,
+  author    = {Bos, Joppe W. and Halderman, J. Alex and Heninger, Nadia and Moore, Jonathan and Naehrig, Michael and Wustrow, Eric},
+  title     = {{Elliptic Curve Cryptography in Practice}},
+  booktitle = {Financial Cryptography and Data Security (FC)},
+  series    = {LNCS},
+  volume    = {8437},
+  publisher = {Springer},
+  year      = {2014},
+  pages     = {157--175},
+  doi       = {10.1007/978-3-662-45472-5_11}
+}
+
+@inproceedings{breitner2019biased,
+  author    = {Breitner, Joachim and Heninger, Nadia},
+  title     = {{Biased Nonce Sense: Lattice Attacks Against Weak ECDSA Signatures in Cryptocurrencies}},
+  booktitle = {Financial Cryptography and Data Security (FC)},
+  series    = {LNCS},
+  volume    = {11598},
+  publisher = {Springer},
+  year      = {2019},
+  pages     = {3--20},
+  doi       = {10.1007/978-3-030-32101-7_1}
+}
+
+@inproceedings{michaelis2013randomly,
+  author    = {Michaelis, Kai and Meyer, Christopher and Schwenk, J{\"o}rg},
+  title     = {{Randomly Failed! The State of Randomness in Current Java Implementations}},
+  booktitle = {Topics in Cryptology -- CT-RSA 2013},
+  series    = {LNCS},
+  volume    = {7779},
+  publisher = {Springer},
+  year      = {2013},
+  pages     = {129--144},
+  doi       = {10.1007/978-3-642-36095-4_9}
+}
+
+@article{goldberg1996netscape,
+  author  = {Goldberg, Ian and Wagner, David},
+  title   = {{Randomness and the Netscape Browser}},
+  journal = {Dr. Dobb's Journal},
+  year    = {1996},
+  month   = {January},
+  pages   = {66--70}
+}
+
+@inproceedings{gutterman2006linux,
+  author    = {Gutterman, Zvi and Pinkas, Benny and Reinman, Tzachy},
+  title     = {{Analysis of the Linux Random Number Generator}},
+  booktitle = {Proceedings of the 2006 IEEE Symposium on Security and Privacy (S\&P)},
+  year      = {2006},
+  pages     = {371--385},
+  doi       = {10.1109/SP.2006.5}
+}
+
+@inproceedings{dodis2013devrandom,
+  author    = {Dodis, Yevgeniy and Pointcheval, David and Ruhault, Sylvain and Vergnaud, Damien and Wichs, Daniel},
+  title     = {{Security Analysis of Pseudo-Random Number Generators with Input: /dev/random is not Robust}},
+  booktitle = {Proceedings of the 2013 ACM SIGSAC Conference on Computer and Communications Security (CCS)},
+  year      = {2013},
+  pages     = {647--658},
+  doi       = {10.1145/2508859.2516653}
+}
+
+@inproceedings{ristenpart2010vmreset,
+  author    = {Ristenpart, Thomas and Yilek, Scott},
+  title     = {{When Good Randomness Goes Bad: Virtual Machine Reset Vulnerabilities and Hedging Deployed Cryptography}},
+  booktitle = {Proceedings of the Network and Distributed System Security Symposium (NDSS)},
+  year      = {2010}
+}
+
+@inproceedings{everspaugh2014whirlwind,
+  author    = {Everspaugh, Adam and Zhai, Yan and Jellinek, Robert and Ristenpart, Thomas and Swift, Michael},
+  title     = {{Not-So-Random Numbers in Virtualized Linux and the Whirlwind RNG}},
+  booktitle = {Proceedings of the 2014 IEEE Symposium on Security and Privacy (S\&P)},
+  year      = {2014},
+  pages     = {559--574},
+  doi       = {10.1109/SP.2014.42}
+}
+
+@inproceedings{nemec2017roca,
+  author    = {Nemec, Matus and Sys, Marek and Svenda, Petr and Klinec, Dusan and Matyas, Vashek},
+  title     = {{The Return of Coppersmith's Attack: Practical Factorization of Widely Used RSA Moduli}},
+  booktitle = {Proceedings of the 2017 ACM SIGSAC Conference on Computer and Communications Security (CCS)},
+  year      = {2017},
+  pages     = {1631--1648},
+  doi       = {10.1145/3133956.3133969}
+}
+
+@inproceedings{moghimi2020tpmfail,
+  author    = {Moghimi, Daniel and Sunar, Berk and Eisenbarth, Thomas and Heninger, Nadia},
+  title     = {{TPM-FAIL: TPM meets Timing and Lattice Attacks}},
+  booktitle = {Proceedings of the 29th USENIX Security Symposium},
+  year      = {2020},
+  pages     = {2057--2073}
+}
+
+@article{jancar2020minerva,
+  author  = {Jancar, Jan and Sedlacek, Vladimir and Svenda, Petr and Sys, Marek},
+  title   = {{Minerva: The Curse of ECDSA Nonces}},
+  journal = {IACR Transactions on Cryptographic Hardware and Embedded Systems (TCHES)},
+  volume  = {2020},
+  number  = {4},
+  year    = {2020},
+  pages   = {281--308},
+  doi     = {10.13154/tches.v2020.i4.281-308}
+}
+
+@inproceedings{cohney2018duhk,
+  author    = {Cohney, Shaanan and Green, Matthew D. and Heninger, Nadia},
+  title     = {{Practical State Recovery Attacks Against Legacy RNG Implementations}},
+  booktitle = {Proceedings of the 2018 ACM SIGSAC Conference on Computer and Communications Security (CCS)},
+  year      = {2018},
+  pages     = {265--280},
+  doi       = {10.1145/3243734.3243756}
+}
+
+@inproceedings{cohney2020blackswan,
+  author    = {Cohney, Shaanan and Kwong, Andrew and Paz, Shachar and Genkin, Daniel and Heninger, Nadia and Ronen, Eyal and Yarom, Yuval},
+  title     = {{Pseudorandom Black Swans: Cache Attacks on CTR\_DRBG}},
+  booktitle = {Proceedings of the 2020 IEEE Symposium on Security and Privacy (S\&P)},
+  year      = {2020},
+  pages     = {1241--1258},
+  doi       = {10.1109/SP40000.2020.00046}
+}
+
+@inproceedings{argyros2012php,
+  author    = {Argyros, George and Kiayias, Aggelos},
+  title     = {{I Forgot Your Password: Randomness Attacks Against PHP Applications}},
+  booktitle = {Proceedings of the 21st USENIX Security Symposium},
+  year      = {2012},
+  pages     = {81--96}
+}
+
+@inproceedings{garcia2008mifare,
+  author    = {Garcia, Flavio D. and de Koning Gans, Gerhard and Muijrers, Ruben and van Rossum, Peter and Verdult, Roel and Wichers Schreur, Ronny and Jacobs, Bart},
+  title     = {{Dismantling MIFARE Classic}},
+  booktitle = {Computer Security -- ESORICS 2008},
+  series    = {LNCS},
+  volume    = {5283},
+  publisher = {Springer},
+  year      = {2008},
+  pages     = {97--114},
+  doi       = {10.1007/978-3-540-88313-5_7}
+}
+
+@inproceedings{nohl2008rfid,
+  author    = {Nohl, Karsten and Evans, David and Starbug and Pl{\"o}tz, Henryk},
+  title     = {{Reverse-Engineering a Cryptographic RFID Tag}},
+  booktitle = {Proceedings of the 17th USENIX Security Symposium},
+  year      = {2008},
+  pages     = {185--193}
+}
+
+@misc{fail0verflow2010ps3,
+  author       = {{fail0verflow}},
+  title        = {{Console Hacking 2010: PS3 Epic Fail}},
+  howpublished = {27th Chaos Communication Congress (27C3)},
+  year         = {2010}
+}
+
+% ============================ STANDARDS, CONSTRUCTIONS, DEFENSES ============================
+@techreport{rfc4086,
+  author      = {Eastlake, Donald E. and Schiller, Jeffrey I. and Crocker, Steve},
+  title       = {{Randomness Requirements for Security}},
+  institution = {IETF},
+  type        = {RFC},
+  number      = {4086},
+  year        = {2005},
+  doi         = {10.17487/RFC4086}
+}
+
+@techreport{rfc6979,
+  author      = {Pornin, Thomas},
+  title       = {{Deterministic Usage of the Digital Signature Algorithm (DSA) and Elliptic Curve Digital Signature Algorithm (ECDSA)}},
+  institution = {IETF},
+  type        = {RFC},
+  number      = {6979},
+  year        = {2013},
+  doi         = {10.17487/RFC6979}
+}
+
+@techreport{nist80090a,
+  author      = {Barker, Elaine and Kelsey, John},
+  title       = {{Recommendation for Random Number Generation Using Deterministic Random Bit Generators}},
+  institution = {National Institute of Standards and Technology},
+  type        = {NIST Special Publication},
+  number      = {800-90A Rev. 1},
+  year        = {2015},
+  doi         = {10.6028/NIST.SP.800-90Ar1}
+}
+
+@techreport{nist80090b,
+  author      = {Turan, Meltem S{\"o}nmez and Barker, Elaine and Kelsey, John and McKay, Kerry A. and Baish, Mary L. and Boyle, Mike},
+  title       = {{Recommendation for the Entropy Sources Used for Random Bit Generation}},
+  institution = {National Institute of Standards and Technology},
+  type        = {NIST Special Publication},
+  number      = {800-90B},
+  year        = {2018},
+  doi         = {10.6028/NIST.SP.800-90B}
+}
+
+@techreport{nist80090c,
+  author      = {Barker, Elaine and Kelsey, John and McKay, Kerry and Roginsky, Allen and Turan, Meltem S{\"o}nmez},
+  title       = {{Recommendation for Random Bit Generator (RBG) Constructions}},
+  institution = {National Institute of Standards and Technology},
+  type        = {NIST Special Publication},
+  number      = {800-90C},
+  year        = {2025},
+  month       = sep,
+  doi         = {10.6028/NIST.SP.800-90C}
+}
+
+@article{zhu2017entropy,
+  author  = {Zhu, Shuangyi and Ma, Yuan and Chen, Tianyu and Lin, Jingqiang and Jing, Jiwu},
+  title   = {{Analysis and Improvement of Entropy Estimators in NIST SP 800-90B for Non-IID Entropy Sources}},
+  journal = {IACR Transactions on Symmetric Cryptology},
+  volume  = {2017},
+  number  = {3},
+  year    = {2017},
+  pages   = {151--168}
+}
+
+@inproceedings{poddebniak2018fault,
+  author    = {Poddebniak, Damian and Somorovsky, Juraj and Schinzel, Sebastian and Lochter, Manfred and R{\"o}sler, Paul},
+  title     = {{Attacking Deterministic Signature Schemes Using Fault Attacks}},
+  booktitle = {Proceedings of the 2018 IEEE European Symposium on Security and Privacy (EuroS\&P)},
+  year      = {2018},
+  pages     = {338--352},
+  doi       = {10.1109/EUROSP.2018.00031}
+}
+
+@inproceedings{kelsey1999yarrow,
+  author    = {Kelsey, John and Schneier, Bruce and Ferguson, Niels},
+  title     = {{Yarrow-160: Notes on the Design and Analysis of the Yarrow Cryptographic Pseudorandom Number Generator}},
+  booktitle = {Selected Areas in Cryptography (SAC)},
+  series    = {LNCS},
+  volume    = {1758},
+  publisher = {Springer},
+  year      = {1999},
+  pages     = {13--33},
+  doi       = {10.1007/3-540-46513-8_2}
+}
+
+@misc{shumow2007dualec,
+  author       = {Shumow, Dan and Ferguson, Niels},
+  title        = {{On the Possibility of a Back Door in the NIST SP800-90 Dual Ec Prng}},
+  howpublished = {CRYPTO 2007 Rump Session},
+  year         = {2007}
+}
+
+@inproceedings{bellare2009hedged,
+  author    = {Bellare, Mihir and Brakerski, Zvika and Naor, Moni and Ristenpart, Thomas and Segev, Gil and Shacham, Hovav and Yilek, Scott},
+  title     = {{Hedged Public-Key Encryption: How to Protect Against Bad Randomness}},
+  booktitle = {Advances in Cryptology -- ASIACRYPT 2009},
+  series    = {LNCS},
+  volume    = {5912},
+  publisher = {Springer},
+  year      = {2009},
+  pages     = {232--249},
+  doi       = {10.1007/978-3-642-10366-7_14}
+}
+
+@article{bernstein2012ed25519,
+  author  = {Bernstein, Daniel J. and Duif, Niels and Lange, Tanja and Schwabe, Peter and Yang, Bo-Yin},
+  title   = {{High-Speed High-Security Signatures}},
+  journal = {Journal of Cryptographic Engineering},
+  volume  = {2},
+  number  = {2},
+  year    = {2012},
+  pages   = {77--89},
+  doi     = {10.1007/s13389-012-0027-1}
+}
+
+@inproceedings{corrigangibbs2013ensuring,
+  author    = {Corrigan-Gibbs, Henry and Mu, Wendy and Boneh, Dan and Ford, Bryan},
+  title     = {{Ensuring High-Quality Randomness in Cryptographic Key Generation}},
+  booktitle = {Proceedings of the 2013 ACM SIGSAC Conference on Computer and Communications Security (CCS)},
+  year      = {2013},
+  pages     = {685--696},
+  doi       = {10.1145/2508859.2516680}
+}
+
+@inproceedings{strenzke2016openssl,
+  author    = {Strenzke, Falko},
+  title     = {{An Analysis of OpenSSL's Random Number Generator}},
+  booktitle = {Advances in Cryptology -- EUROCRYPT 2016},
+  series    = {LNCS},
+  volume    = {9665},
+  publisher = {Springer},
+  year      = {2016},
+  pages     = {644--669},
+  doi       = {10.1007/978-3-662-49890-3_25}
+}
+
+@inproceedings{shrimpton2015intel,
+  author    = {Shrimpton, Thomas and Terashima, R. Seth},
+  title     = {{A Provable-Security Analysis of Intel's Secure Key RNG}},
+  booktitle = {Advances in Cryptology -- EUROCRYPT 2015},
+  series    = {LNCS},
+  volume    = {9056},
+  publisher = {Springer},
+  year      = {2015},
+  pages     = {77--100},
+  doi       = {10.1007/978-3-662-46800-5_4}
+}
+
+@misc{bip32,
+  author       = {Wuille, Pieter},
+  title        = {{BIP-32: Hierarchical Deterministic Wallets}},
+  howpublished = {Bitcoin Improvement Proposal 32},
+  year         = {2012}
+}
+
+@misc{bip39,
+  author       = {Palatinus, Marek and Rusnak, Pavol and Voisine, Aaron and Bowe, Sean},
+  title        = {{BIP-39: Mnemonic Code for Generating Deterministic Keys}},
+  howpublished = {Bitcoin Improvement Proposal 39},
+  year         = {2013}
+}
+
+% ============================ ROUND 2: ADDITIONAL VERIFIED SOURCES ============================
+@misc{amd2025rdseed,
+  author       = {{Advanced Micro Devices}},
+  title        = {{RDSEED Failure on AMD ``Zen 5'' Processors}},
+  howpublished = {AMD Security Bulletin AMD-SB-7055, CVE-2025-62626},
+  year         = {2025},
+  note         = {Published Oct. 23, 2025; last revised Jan. 15, 2026.
+                  \url{https://www.amd.com/en/resources/product-security/bulletin/amd-sb-7055.html}}
+}
+
+@misc{coinspect2026illbloom,
+  author       = {{Coinspect Security}},
+  title        = {{Ill Bloom: Investigating a Wallet Generation Vulnerability During Active Exploitation}},
+  howpublished = {Coinspect Research},
+  year         = {2026},
+  note         = {\url{https://www.coinspect.com/blog/ill-bloom-investigation/} and \url{https://illbloom.org/}, accessed Aug. 2026}
+}
+
+@misc{ledger2023trustwallet,
+  author       = {{Ledger Donjon}},
+  title        = {{Funds of Every Wallet Created with the Trust Wallet Browser Extension Could Have Been Stolen}},
+  howpublished = {Ledger Blog},
+  year         = {2023},
+  note         = {\url{https://www.ledger.com/blog/funds-of-every-wallet-created-with-the-trust-wallet-browser-extension-could-have-been-stolen}}
+}
+
+@misc{ledger2026coldcard,
+  author       = {{Ledger}},
+  title        = {{The COLDCARD Incident: How Did This Happen?}},
+  howpublished = {Ledger Blog},
+  year         = {2026},
+  note         = {\url{https://www.ledger.com/blog-coldcard-incident}, accessed Aug. 2026}
+}
+
+@misc{trezor2025entropycheck,
+  author       = {{Trezor}},
+  title        = {{Entropy Check: How Trezor Verifies Your Wallet Is Truly Random}},
+  howpublished = {Trezor Knowledge Base},
+  year         = {2025},
+  note         = {\url{https://trezor.io/learn/security-privacy/how-trezor-keeps-you-safe/entropy-check-how-trezor-verifies-your-wallet-is-truly-random}, accessed Aug. 2026}
+}
+
+@inproceedings{mavroudis2017touch,
+  author    = {Mavroudis, Vasilios and Cerulli, Andrea and Svenda, Petr and Cvrcek, Dan and Klinec, Dusan and Danezis, George},
+  title     = {{A Touch of Evil: High-Assurance Cryptographic Hardware from Untrusted Components}},
+  booktitle = {Proceedings of the 2017 ACM SIGSAC Conference on Computer and Communications Security (CCS)},
+  year      = {2017},
+  pages     = {1583--1600},
+  note      = {arXiv:1709.03817}
+}
+
+@article{martin2015strng,
+  author  = {Mart{\'i}n, Honorio and Korak, Thomas and San Mill{\'a}n, Enrique and Hutter, Michael},
+  title   = {{Fault Attacks on STRNGs: Impact of Glitches, Temperature, and Underpowering on Randomness}},
+  journal = {IEEE Transactions on Information Forensics and Security},
+  volume  = {10},
+  number  = {2},
+  year    = {2015},
+  pages   = {266--277},
+  doi     = {10.1109/TIFS.2014.2374072}
+}
+
+@inproceedings{bayon2012em,
+  author    = {Bayon, Pierre and Bossuet, Lilian and Aubert, Alain and Fischer, Viktor and Poucheret, Fran{\c c}ois and Robisson, Bruno and Maurine, Philippe},
+  title     = {{Contactless Electromagnetic Active Attack on Ring Oscillator Based True Random Number Generator}},
+  booktitle = {Constructive Side-Channel Analysis and Secure Design (COSADE)},
+  series    = {LNCS},
+  volume    = {7275},
+  publisher = {Springer},
+  year      = {2012},
+  pages     = {151--166},
+  doi       = {10.1007/978-3-642-29912-4_12}
+}
+
+% ============================ ROUND 3: ADDITIONAL VERIFIED SOURCES ============================
+@misc{milksad2023,
+  author       = {Reitter, Christian and {Milk Sad Team}},
+  title        = {{Milk Sad: Weak Entropy in the Libbitcoin Explorer \texttt{bx seed} Command (CVE-2023-39910)}},
+  howpublished = {Vulnerability disclosure},
+  year         = {2023},
+  note         = {\url{https://milksad.info/} and \url{https://blog.inhq.net/posts/milk-sad-vuln1/}}
+}
+
+@misc{1inch2022profanity,
+  author       = {{1inch Network}},
+  title        = {{A Vulnerability Disclosed in Profanity, an Ethereum Vanity Address Tool}},
+  howpublished = {1inch Blog},
+  year         = {2022},
+  note         = {\url{https://blog.1inch.com/a-vulnerability-disclosed-in-profanity-an-ethereum-vanity-address-tool/}}
+}
+
+@misc{darkskippy2024,
+  author       = {Fournier, Lloyd and Farrow, Nick and Linus, Robin},
+  title        = {{Dark Skippy: A Powerful Method for Key Exfiltration Attacks}},
+  howpublished = {Coordinated disclosure},
+  year         = {2024},
+  note         = {Disclosed to vendors 8 Mar.\ 2024. \url{https://darkskippy.com/}}
+}
+
+@inproceedings{young1997kleptography,
+  author    = {Young, Adam and Yung, Moti},
+  title     = {{Kleptography: Using Cryptography Against Cryptography}},
+  booktitle = {Advances in Cryptology -- EUROCRYPT '97},
+  series    = {LNCS},
+  volume    = {1233},
+  publisher = {Springer},
+  year      = {1997},
+  pages     = {62--74},
+  doi       = {10.1007/3-540-69053-0_6}
+}
+
+@misc{bitbox2019antiklepto,
+  author       = {{Shift Crypto}},
+  title        = {{Anti-Klepto Explained: How the BitBox02 Protects You Against Leaking Private Keys}},
+  howpublished = {BitBox Blog},
+  year         = {2019},
+  note         = {\url{https://bitbox.swiss/blog/anti-klepto-explained-protection-against-leaking-private-keys/}}
+}
+
+@misc{blockstream2020antiexfil,
+  author       = {{Blockstream}},
+  title        = {{Anti-Exfil: Stopping Key Exfiltration}},
+  howpublished = {Blockstream Blog},
+  year         = {2020},
+  note         = {\url{https://blog.blockstream.com/anti-exfil-stopping-key-exfiltration/}}
+}
+
+@misc{cfrg2025hedged,
+  author       = {Preu{\ss} Mattsson, John and Thormarker, Erik and Ruohomaa, Sini},
+  title        = {{Hedged ECDSA and EdDSA Signatures}},
+  howpublished = {Internet-Draft draft-irtf-cfrg-det-sigs-with-noise-05, IRTF CFRG},
+  year         = {2025},
+  note         = {\url{https://datatracker.ietf.org/doc/draft-irtf-cfrg-det-sigs-with-noise/}}
+}
+
+@article{kietzmann2021prng,
+  author    = {Kietzmann, Peter and Schmidt, Thomas C. and W{\"a}hlisch, Matthias},
+  title     = {{A Guideline on Pseudorandom Number Generation (PRNG) in the IoT}},
+  journal   = {ACM Computing Surveys},
+  volume    = {54},
+  number    = {6},
+  articleno = {112},
+  year      = {2021},
+  doi       = {10.1145/3453159}
+}
+
+@inproceedings{hastings2016weak,
+  title     = {Weak Keys Remain Widespread in Network Devices},
+  author    = {Hastings, Marcella and Fried, Joshua and Heninger, Nadia},
+  booktitle = {Proceedings of the 2016 Internet Measurement Conference (IMC)},
+  pages     = {49--63},
+  year      = {2016},
+  publisher = {ACM}
+}
+
+@inproceedings{kilgallin2019factoring,
+  title     = {Factoring {RSA} Keys in the {IoT} Era},
+  author    = {Kilgallin, Jonathan and Vasko, Ross},
+  booktitle = {First IEEE International Conference on Trust, Privacy and Security
+               in Intelligent Systems and Applications (TPS-ISA)},
+  year      = {2019},
+  publisher = {IEEE}
+}
+
+@misc{schneier2015weakening,
+  title  = {Surreptitiously Weakening Cryptographic Systems},
+  author = {Schneier, Bruce and Fredrikson, Matthew and Kohno, Tadayoshi and
+            Ristenpart, Thomas},
+  year   = {2015},
+  note   = {Cryptology ePrint Archive, Report 2015/097},
+  howpublished = {\url{https://eprint.iacr.org/2015/097}}
+}
+
+@book{aumasson2024serious,
+  author    = {Aumasson, Jean-Philippe},
+  title     = {{Serious Cryptography: A Practical Introduction to Modern Encryption}},
+  edition   = {2nd},
+  publisher = {No Starch Press},
+  address   = {San Francisco, CA, USA},
+  year      = {2024},
+  isbn      = {978-1-7185-0384-7},
+  note      = {Chapter~2, Randomness}
+}
+
+@misc{galaxy2026coldcard,
+  author       = {Wu, Jianing},
+  title        = {{Your Keys, Not Your Coins: Coldcard Wallets Hacked for \$130m and Counting}},
+  howpublished = {Galaxy Research},
+  year         = {2026},
+  month        = aug,
+  note         = {\url{https://www.galaxy.com/insights/research/your-keys-not-your-coins-coldcard-wallets-hacked-for-130m-and-counting}, accessed Nov. 2026}
+}
+
+@misc{trivedi2026randomnessartifact,
+  author       = {Trivedi, Devharsh},
+  title        = {{Artifact for SoK: Randomness Failures and Their Remedies in Deployed Cryptographic Systems}},
+  howpublished = {GitHub repository, release v1.0},
+  year         = {2026},
+  note         = {\url{https://github.com/devharsh/sok-randomness-181-artifact}}
+}

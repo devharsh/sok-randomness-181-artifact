@@ -1,0 +1,29 @@
+id,name,year,domain,stages,root_cause,adversary,observability,radius,exploit_access,target_secret,cve,dwell_years,citation_keys,source
+netscape1996,Netscape SSL RNG,1996,Browser/TLS,S4,"Seed derived from process ID, parent PID, and time of day",T1,silent,ecosystem,A1,session_key,,,goldberg1996netscape,"Dr. Dobb's Journal, Jan. 1996"
+mifare2008,MIFARE Crypto-1,2008,Smart card/RFID,S3,16-bit LFSR generator; challenges predictable,T1,statistical,ecosystem,A2,session_key,,,garcia2008mifare;nohl2008rfid,ESORICS 2008; USENIX Security 2008
+debian2008,Debian OpenSSL,2008,TLS/SSH,S*,Downstream patch removed entropy input; ~15-bit key space,T1;T5,silent,ecosystem,A1,long_term_key,CVE-2008-0166,2.0,yilek2009debian,"IMC 2009, doi:10.1145/1644893.1644896"
+ps3_2010,PlayStation 3 ECDSA,2010,Game console,S6,Constant per-signature nonce,T3,external,ecosystem,A1,ephemeral_nonce,,,fail0verflow2010ps3,"27th Chaos Communication Congress, 2010"
+vmreset2010,Virtual machine reset,2010,Virtualized TLS,S5,Generator state cloned on snapshot or reset,T2,silent,fleet,A1,session_key,,,ristenpart2010vmreset,NDSS 2010
+psandqs2012,Mining Ps and Qs,2012,TLS/SSH devices,S1,Low boot-time entropy; shared keys and common factors,T1,silent,ecosystem,A1,long_term_key,,,heninger2012mining,USENIX Security 2012
+ronwrong2012,Shared RSA factors,2012,TLS PKI,S1,Low-entropy key generation; colliding primes,T1,silent,ecosystem,A1,long_term_key,,,lenstra2012ron,IACR ePrint 2012/064
+php2012,PHP application tokens,2012,Web applications,S3,Non-cryptographic PRNG for security tokens,T1,silent,ecosystem,A1,session_key,,,argyros2012php,USENIX Security 2012
+dualec2007,Dual_EC_DRBG back door,2007,Standard,S3,Kleptographic constants in standardized DRBG,T4,silent,ecosystem,A3,generator_state,,,shumow2007dualec;bernstein2016dualec,CRYPTO 2007 rump; The New Codebreakers 2016
+android2013,Android SecureRandom,2013,Mobile wallet,S3;S6,Unseeded PRNG leading to repeated ECDSA nonces,T3,external,fleet,A1,ephemeral_nonce,,,michaelis2013randomly,"CT-RSA 2013, doi:10.1007/978-3-642-36095-4_9"
+devrandom2013,/dev/random robustness,2013,OS RNG,S2,Entropy accounting not robust under the formal model,T2,silent,ecosystem,A2,generator_state,,,dodis2013devrandom,"ACM CCS 2013, doi:10.1145/2508859.2516653"
+dualectls2014,Dual EC in TLS products,2014,TLS products,S3,Standardized back door shown practically exploitable,T4,silent,fleet,A3,generator_state,,,checkoway2014dualec,USENIX Security 2014
+btcnonce2014,Bitcoin ECDSA nonce reuse,2014,Blockchain,S6,Repeated ECDSA nonces observable on the public ledger,T3,external,ecosystem,A1,ephemeral_nonce,,,bos2014ecc,"FC 2014, doi:10.1007/978-3-662-45472-5_11"
+whirlwind2014,Not-so-random numbers in virtualized Linux,2014,Virtualized OS,S5,VM fork reuses generator state,T2,silent,fleet,A1,generator_state,,,everspaugh2014whirlwind,"IEEE S&P 2014, doi:10.1109/SP.2014.42"
+juniper2016,Juniper Dual EC incident,2016,VPN,S3;S*,Back door plus attacker-substituted curve constant,T4;T5,silent,fleet,A3,generator_state,,,checkoway2016juniper,"ACM CCS 2016, doi:10.1145/2976749.2978395"
+opensslrng2016,OpenSSL RNG design weaknesses,2016,TLS library,S5,Fork-safety and internal state weaknesses,T2,silent,fleet,A2,generator_state,,,strenzke2016openssl,"EUROCRYPT 2016, doi:10.1007/978-3-662-49890-3_25"
+roca2017,ROCA (Infineon RSALib),2017,Smart-card key generation,S4,Structured primes reduce effective entropy; Coppersmith factorization,T1,statistical,ecosystem,A1,long_term_key,,,nemec2017roca,"ACM CCS 2017, doi:10.1145/3133956.3133969"
+duhk2018,DUHK,2018,VPN and FIPS appliances,S4;S5,Hardcoded X9.31 seed key enabling state recovery,T2,silent,fleet,A1,generator_state,,,cohney2018duhk,"ACM CCS 2018, doi:10.1145/3243734.3243756"
+biasednonce2019,Biased Nonce Sense,2019,Blockchain,S6,Short or biased ECDSA nonces; lattice key recovery,T3,external,ecosystem,A1,ephemeral_nonce,,,breitner2019biased,"FC 2019, doi:10.1007/978-3-030-32101-7_1"
+minerva2020,Minerva,2020,Smart-card ECDSA,S6,Nonce bit-length leaks via timing,T3,statistical,fleet,A2,ephemeral_nonce,,,jancar2020minerva,"TCHES 2020(4), doi:10.13154/tches.v2020.i4.281-308"
+tpmfail2020,TPM-Fail,2020,TPM ECDSA,S6,Nonce leakage via timing; lattice key recovery,T3,statistical,fleet,A2,ephemeral_nonce,,,moghimi2020tpmfail,USENIX Security 2020
+blackswan2020,CTR_DRBG pseudorandom black swans,2020,TLS libraries,S3;S5,Missing reseed plus cache side channel enabling state recovery,T2,silent,fleet,A2,generator_state,,,cohney2020blackswan,"IEEE S&P 2020, doi:10.1109/SP40000.2020.00046"
+trustwallet2022,Trust Wallet browser extension,2022,Browser wallet,S3;S4,Weak generator; private key derivable from the public address,T1,silent,fleet,A1,long_term_key,,,ledger2023trustwallet,Ledger Donjon disclosure
+profanity2022,Profanity vanity address generator,2022,Ethereum key tool,S4,32-bit seed for GPU key search; generator state reconstructable,T1,silent,ecosystem,A1,long_term_key,,,1inch2022profanity,"1inch disclosure, 2022"
+milksad2023,Milk Sad (Libbitcoin Explorer bx seed),2023,Wallet CLI,S3;S4,Mersenne Twister MT19937 seeded from a 32-bit system clock value,T1,silent,ecosystem,A1,long_term_key,CVE-2023-39910,,milksad2023,CVE-2023-39910; milksad.info
+amdrdseed2025,AMD Zen 5 RDSEED failure,2025,CPU instruction,S1,16- and 32-bit RDSEED return 0 while incorrectly signaling success,T1,statistical,ecosystem,A2,long_term_key,CVE-2025-62626,,amd2025rdseed,AMD-SB-7055; CVE-2025-62626
+illbloom2026,Ill Bloom,2026,Software wallets,S3;S4,Weak CryptoJS PRNG used for BIP-39 recovery phrase generation,T1,silent,ecosystem,A1,long_term_key,,,coinspect2026illbloom,Coinspect disclosure; illbloom.org
+coldcard2026,ColdCard seed generation,2026,Hardware wallet,S*;S3;S4;S5,Symbol collision linked seed generation to a non-cryptographic software PRNG,T5;T1,silent,fleet,A1,long_term_key,,5.3,coinkite2026backgrounder;block2026coldcard,Coinkite backgrounder; Block engineering analysis

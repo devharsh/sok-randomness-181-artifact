@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this artifact, please cite the paper and the artifact."
+title: "Artifact for SoK: Randomness Failures and Their Remedies in Deployed Cryptographic Systems"
+version: "1.0"
+date-released: 2026-12-01
+license: MIT
+repository-code: "https://github.com/devharsh/sok-randomness-181-artifact"
+authors:
+  - family-names: Trivedi
+    given-names: Devharsh
+    affiliation: "LaGuardia Community College, City University of New York"
+    orcid: "https://orcid.org/0000-0001-6374-7249"
+preferred-citation:
+  type: conference-paper
+  title: "SoK: Randomness Failures and Their Remedies in Deployed Cryptographic Systems"
+  authors:
+    - family-names: Trivedi
+      given-names: Devharsh
+      orcid: "https://orcid.org/0000-0001-6374-7249"
+  conference:
+    name: "Financial Cryptography and Data Security 2027 (FC 2027)"
+  year: 2027

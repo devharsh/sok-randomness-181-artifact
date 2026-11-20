@@ -1,0 +1,86 @@
+\section{Introduction}
+\label{sec:intro}
+
+On 30 July 2026, attackers began emptying Bitcoin wallets whose seeds had been generated on
+\coldcard{} hardware devices. One wave emptied 1{,}196 addresses in 41 minutes, and published
+totals for the campaign range from 1{,}367 bitcoin (\$88.6 million) to about \$130 million,
+depending on the cut-off date~\cite{trm2026coldcard,cbc2026coldcard,thn2026coldcard,galaxy2026coldcard}.
+No device was touched. During a March 2021 migration to a new cryptography library, a symbol
+collision linked seed generation to MicroPython's non-cryptographic \emph{Yasmarang} generator
+instead of the hardware source, and a build guard that tested whether a macro was defined,
+rather than whether it was enabled, never fired~\cite{coinkite2026backgrounder,block2026coldcard}.
+How much entropy the affected seeds kept is disputed. The vendor's preliminary estimate is a
+search space of about 40 bits on the Mk2 and Mk3 and about 72 bits on the Mk4, Mk5, and
+Q~\cite{coinkite2026backgrounder}. Block's analysis bounds the later models at \bits{32}
+distinguishable output streams once the fallback state and call history are known, inside a raw
+ceiling near \bits{73}, and states that exploitability was not confirmed
+empirically~\cite{block2026coldcard}. Every estimate is far below the intended 128 bits, and for
+five years nothing in the devices' behavior revealed the fault.
+
+The incident is new in scale, not in kind.
+Randomness is the substrate on which every other cryptographic guarantee rests: key generation,
+signature nonces, initialization vectors, session identifiers, challenge values, and padding
+all consume it, and all of them fail catastrophically when it is predictable. It is also
+uniquely treacherous to defend, because a broken generator produces output that is
+indistinguishable from a working one until the moment it is exploited. The historical record
+bears this out. The Netscape browser's SSL keys were predicted from the process ID and clock in
+1996~\cite{goldberg1996netscape}. A 2008 Debian packaging change reduced OpenSSL key entropy to
+15 bits, so that every affected key could be enumerated~\cite{yilek2009debian}. Internet-wide
+scans in 2012 recovered the private keys of more than a hundred thousand TLS and SSH hosts that had
+generated keys with too little boot-time entropy~\cite{heninger2012mining,lenstra2012ron}. A
+2013 Android \texttt{SecureRandom} defect made Bitcoin wallets reuse ECDSA nonces, which thieves
+exploited to sweep them~\cite{michaelis2013randomly}. The \dualec{} generator carried a demonstrable back door
+into standards and shipped products~\cite{shumow2007dualec,checkoway2014dualec,checkoway2016juniper,bernstein2016dualec}.
+Sony's PlayStation~3 used a constant signature nonce and lost its code-signing
+key~\cite{fail0verflow2010ps3}. The list runs from smart cards to virtual machines to trusted
+platform modules~\cite{garcia2008mifare,ristenpart2010vmreset,moghimi2020tpmfail}.
+
+Each of these incidents has been analyzed in depth, and the architecture of a sound generator is
+standardized: SP 800-90B specifies entropy sources, SP 800-90A deterministic generators, and
+SP 800-90C their assembly into a complete random bit
+generator~\cite{nist80090b,nist80090a,nist80090c}. It is also well established that statistical
+test batteries cannot certify unpredictability~\cite{aumasson2024serious,nist80090b}. What is
+missing is a joined account of the deployed record: for each failure, where in the assembled
+system it occurred, which defenses could have stopped it, and whether those defenses existed when
+the system shipped. Two loci recur in that record and sit outside the SP 800-90 architecture. One
+is the consuming protocol, as in the reused signature nonces of the PlayStation~3 and of Android
+wallets~\cite{fail0verflow2010ps3,michaelis2013randomly}. The other is the build and integration
+layer that decides which generator is actually linked, as in the Debian patch of 2008, the
+Juniper ScreenOS constant substitution, and
+\coldcard{}~\cite{yilek2009debian,checkoway2016juniper,coinkite2026backgrounder}.
+
+\paragraph{Contributions.}
+This Systematization of Knowledge makes four contributions.
+\begin{itemize}[leftmargin=*,topsep=2pt,itemsep=1pt]
+\item \emph{A pipeline model} that adopts the SP 800-90 decomposition for stages \stage{1} to
+\stage{5} and adds consumption (\stage{6}) and the build and integration surface
+(\stage{$\ast$}), with an explicit mapping to the standards (Section~\ref{sec:taxonomy}).
+\item \emph{A coded corpus} of twenty-eight deployed incidents from 1996 to 2026, chosen by
+stated inclusion rules and coded on six attributes (Sections~\ref{sec:background}
+and~\ref{sec:incidents}).
+\item \emph{A remedy coverage matrix} that crosses every corpus incident with fourteen remedy
+families under explicit grading rules and records whether a preventing remedy was available when
+the system shipped. The matrix, its rules, and its generating script are released
+(Sections~\ref{sec:remedies} and~\ref{sec:effectiveness}).
+\item \emph{Findings for two audiences.} For researchers, open questions tied to the cells of the
+matrix that no current remedy fills (Section~\ref{sec:discussion}). For implementers, a
+prioritized checklist (Section~\ref{sec:checklist}).
+\end{itemize}
+
+\paragraph{Main findings.}
+Read by column, the matrix shows that statistical testing and certification prevent none of the
+twenty-eight failures and flag only the two that are statistically visible, and that build-path
+verification is the only remedy family that prevents a build and integration failure. Read by
+row, it shows that 24 incidents have a preventing remedy in the catalog, and that in 22 of them
+that remedy existed, at least in part, before the system shipped. Most of the record is
+therefore a gap between available and deployed defenses. The remaining four incidents, a cache
+side channel, two timing leaks, and a flawed prime generator, are prevented by no randomness
+remedy at all. These counts describe our corpus, which was chosen to cover mechanisms rather
+than as a census (Section~\ref{sec:selection}).
+
+\paragraph{Scope.}
+We study randomness failures in \emph{deployed} systems: shipped firmware, production libraries,
+operating systems, and protocols, together with the standards that govern them. We include
+failures whose consequence is a loss of confidentiality, integrity, or authentication traceable
+to predictable, reused, or leaked random values, and we treat the theory of pseudorandom
+generators only insofar as it explains deployed defenses.

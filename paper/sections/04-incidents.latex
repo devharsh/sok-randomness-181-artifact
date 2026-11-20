@@ -1,0 +1,135 @@
+\section{Systematization of Incidents}
+\label{sec:incidents}
+
+Table~\ref{tab:incidents} places twenty-eight documented incidents on the taxonomy of
+Section~\ref{sec:taxonomy}. Appendix~\ref{app:narratives} discusses them stage by stage. Here we
+reconstruct one build and integration failure in detail, because \stage{$\ast$} is the locus the
+standards leave out, and then examine the 2026 wallet cluster, in which unrelated defects were
+exploited by the same method.
+
+One feature of the table deserves naming before we proceed. Our coding admits a device-level
+blast radius, yet no incident in the corpus has one: every failure we record is fleet-wide or
+ecosystem-wide. Selection may contribute, since device-level failures are rarely disclosed, but
+there is also a structural reason. A randomness defect rarely lives in a single device, because
+it lives in a design, a build
+configuration, or a shared library that ships identically to everyone who receives it, so the
+vulnerable population is simply the population that received the artifact. The consequence runs
+through the rest of the paper: remedies that protect one device at a time are poorly matched to a
+failure mode that arrives fleet-wide by construction, which is part of why the structural
+defenses of Section~\ref{sec:remedies} outperform per-device hardening.
+
+\begin{table}[tp]
+\centering
+\caption{Twenty-eight deployed randomness failures, the corpus of this paper, in order of year.
+Stage lists every stage the incident touches, primary first. Root causes are abbreviated, and the released dataset describes each in full. Adv.: T1 offline predictor, T2 state
+recovery, T3 consumption, T4 subversion, T5 integration. Acc.: A1 remote, A2 local, A3 supply
+chain. Obs.: Si silent (passes statistical tests), St statistically detectable, Ex externally
+detectable, such as a repeated nonce on a public ledger. Rad.: F fleet, E ecosystem.}
+\label{tab:incidents}
+\scriptsize
+\setlength{\tabcolsep}{2.3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.55cm} c l >{\raggedright\arraybackslash}p{3.3cm} l c c c@{}}
+\toprule
+\textbf{Incident} & \textbf{Year} & \textbf{Stage} & \textbf{Root cause} & \textbf{Adv.} & \textbf{Acc.} & \textbf{Obs.} & \textbf{Rad.} \\
+\midrule
+Netscape SSL~\cite{goldberg1996netscape} & 1996 & \stage{4} & Seed from PIDs and clock & T1 & A1 & Si & E \\
+Dual EC back door~\cite{shumow2007dualec,bernstein2016dualec} & 2007 & \stage{3} & Back-doored constants & T4 & A3 & Si & E \\
+MIFARE Crypto-1~\cite{garcia2008mifare,nohl2008rfid} & 2008 & \stage{3} & 16-bit LFSR generator & T1 & A2 & St & E \\
+Debian OpenSSL~\cite{yilek2009debian} & 2008 & \stage{$\ast$} & Patch removed entropy input & T1,T5 & A1 & Si & E \\
+PlayStation 3~\cite{fail0verflow2010ps3} & 2010 & \stage{6} & Constant ECDSA nonce & T3 & A1 & Ex & E \\
+VM reset~\cite{ristenpart2010vmreset} & 2010 & \stage{5} & Snapshot replays state & T2 & A1 & Si & F \\
+Mining Ps and Qs~\cite{heninger2012mining} & 2012 & \stage{1} & Low boot-time entropy & T1 & A1 & Si & E \\
+Shared RSA factors~\cite{lenstra2012ron} & 2012 & \stage{1} & Low entropy, shared primes & T1 & A1 & Si & E \\
+PHP app tokens~\cite{argyros2012php} & 2012 & \stage{3} & Non-crypto PRNG for tokens & T1 & A1 & Si & E \\
+Android \texttt{SecureRandom}~\cite{michaelis2013randomly} & 2013 & \stage{3},\stage{6} & PRNG defect, reused nonces & T3 & A1 & Ex & F \\
+/dev/random robustness~\cite{dodis2013devrandom} & 2013 & \stage{2} & Accumulator not robust & T2 & A2 & Si & E \\
+Dual EC in TLS~\cite{checkoway2014dualec} & 2014 & \stage{3} & Exploitable back door & T4 & A3 & Si & F \\
+Bitcoin nonce reuse~\cite{bos2014ecc} & 2014 & \stage{6} & Reused nonces on chain & T3 & A1 & Ex & E \\
+Virtualized Linux~\cite{everspaugh2014whirlwind} & 2014 & \stage{5} & Cloned state reused & T2 & A1 & Si & F \\
+Juniper Dual EC~\cite{checkoway2016juniper} & 2016 & \stage{3},\stage{$\ast$} & Swapped Dual EC constant & T4,T5 & A3 & Si & F \\
+OpenSSL RNG design~\cite{strenzke2016openssl} & 2016 & \stage{5} & Weak fork safety & T2 & A2 & Si & F \\
+ROCA~\cite{nemec2017roca} & 2017 & \stage{4} & Structured RSA primes & T1 & A1 & St & E \\
+DUHK~\cite{cohney2018duhk} & 2018 & \stage{4},\stage{5} & Hardcoded X9.31 key & T2 & A1 & Si & F \\
+Biased Nonce Sense~\cite{breitner2019biased} & 2019 & \stage{6} & Short or biased nonces & T3 & A1 & Ex & E \\
+Minerva~\cite{jancar2020minerva} & 2020 & \stage{6} & Nonce length via timing & T3 & A2 & St & F \\
+TPM-Fail~\cite{moghimi2020tpmfail} & 2020 & \stage{6} & Nonce length via timing & T3 & A2 & St & F \\
+CTR\_DRBG black swans~\cite{cohney2020blackswan} & 2020 & \stage{3},\stage{5} & Cache leak, rare reseed & T2 & A2 & Si & F \\
+Trust Wallet ext.~\cite{ledger2023trustwallet} & 2022 & \stage{3},\stage{4} & MT19937, 32-bit seed & T1 & A1 & Si & F \\
+Profanity~\cite{1inch2022profanity} & 2022 & \stage{4} & 32-bit seed for speed & T1 & A1 & Si & E \\
+Milk Sad~\cite{milksad2023} & 2023 & \stage{3},\stage{4} & MT19937, 32-bit clock seed & T1 & A1 & Si & E \\
+AMD Zen 5 \texttt{RDSEED}~\cite{amd2025rdseed} & 2025 & \stage{1} & Returns 0, flags success & T1 & A2 & St & E \\
+Ill Bloom wallets~\cite{coinspect2026illbloom} & 2026 & \stage{3},\stage{4} & Weak CryptoJS PRNG & T1 & A1 & Si & E \\
+\coldcard{}~\cite{coinkite2026backgrounder,block2026coldcard} & 2026 & \stage{$\ast$},\stage{3--5} & Software PRNG linked & T5,T1 & A1 & Si & F \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{A build and integration failure in detail: \coldcard{}}
+\label{sec:coldcard}
+We reconstruct the \coldcard{} fault path from the vendor's advisory and technical backgrounder
+and from Block's independent analysis~\cite{coinkite2026advisory,coinkite2026backgrounder,block2026coldcard}
+(Figure~\ref{fig:coldcard}). Seed generation was meant to use only the hardware generator.
+During a March 2021 migration to the libNgU library, the seed call moved from
+\texttt{ckcc.rng\_bytes()} to \texttt{ngu.random.bytes()}, whose \texttt{rng\_get()} symbol
+resolved to MicroPython's Yasmarang generator instead of the hardware implementation, because
+both had the same signature. A preprocessor guard was meant to stop the build if the software
+path was enabled, but it tested whether the controlling macro was defined, and the macro was
+defined as zero, so the guard never fired~\cite{coinkite2026backgrounder,block2026coldcard}. The
+fault then touches three stages. At \stage{3} the generator is non-cryptographic. At \stage{4} it
+is seeded once from the low 32 bits of the chip identifier, a timer, and clock
+registers~\cite{block2026coldcard}. At \stage{5} the Mk4, Q, and Mk5 reseed it with
+secure-element output reduced to 32 bits, which replaces a single state
+word~\cite{block2026coldcard}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/coldcard_faultpath.pdf}
+\caption{The \coldcard{} seed-generation fault path, from the vendor's backgrounder and Block's
+analysis~\cite{coinkite2026backgrounder,block2026coldcard}. The intended path (green) used the
+hardware generator. The shipped path (red) linked a software generator, seeded it from narrow
+device state, and on later models reseeded one state word with 32 bits. The two published
+estimates of the resulting search space differ, as the bottom box shows.}
+\label{fig:coldcard}
+\end{figure}
+
+The two analyses agree that the seeds fall far short of 128 bits and disagree on how far. The
+vendor's preliminary estimate is an effective search space of about 40 bits on the Mk2 and Mk3
+and about 72 bits on the Mk4, Mk5, and Q~\cite{coinkite2026backgrounder}. Block counts at most
+\bits{32} distinguishable output streams on the later models when the fallback state and the
+sequence of earlier generator calls are fixed, inside a raw ceiling of about \bits{73.3}, and an
+upper bound of about \bits{40.7} on the Mk2 and Mk3. Block also states that it did not test
+exploitability empirically~\cite{block2026coldcard}. The difference matters for cost: a
+\bits{40} search is cheap on commodity hardware, whereas \bits{72} is out of reach unless the
+attacker can narrow the device state (Appendix~\ref{app:math}). The public record does not
+settle which figure applies to the drained wallets. The sources we found do not attribute the
+thefts to device models, and we found no public report of a seed reconstructed and matched to a
+drained address. None of our conclusions rests on the lower figure. The classification as a
+\stage{$\ast$} failure, the remedy analysis, and the observation that no output test could see
+the fault hold under either estimate, and where a cost depends on the figure we give both. The
+fixed firmware (4.2.0 for the Mk2 and Mk3, 5.6.0 for the Mk4 and Mk5, 1.5.0Q for the Q) cannot
+repair a seed generated earlier, so affected users must move their funds to a new
+seed~\cite{coinkite2026advisory}.
+
+\subsection{The 2026 cluster and the public verification oracle}
+\label{sec:cluster}
+\coldcard{} was not the only wallet entropy failure exploited in 2026. From 27 May, attackers
+drained wallets whose recovery phrases had been generated by software wallets using a weak
+pseudorandom function in the CryptoJS library, a defect its disclosers named Ill Bloom. Public
+reporting placed the exposure in the low thousands of addresses and the losses above five
+million dollars, and the disclosers withheld the affected applications under a staged
+disclosure~\cite{coinspect2026illbloom}. The method was the one used against \coldcard{}:
+generate candidate phrases from the weak generator, derive their addresses, and compare them with
+the chain. Milk Sad (2023) and the Trust Wallet extension (2022) had shown the same pattern with
+32-bit seeds~\cite{milksad2023,ledger2023trustwallet}.
+
+What unites these unrelated code bases is the environment. A public ledger is a free, complete,
+and permanent \emph{verification oracle}. In the TLS and SSH failures, an attacker who suspected
+weak key generation still had to find affected hosts and had no direct way to monetize a match.
+On a blockchain every candidate seed is tested against all funded addresses at once, and balances
+are public, so targets can be ranked by value before any transaction is sent. The attacker's
+cost is the enumeration of the reduced seed space, which Appendix~\ref{app:math} shows is cheap
+at 32 to 40 bits, while the per-victim cost is near zero. This explains the observed dynamics:
+thefts arrive as sudden sweeps rather than a trickle, because an attacker who has finished
+enumerating has every reason to move before disclosure. In such settings the patch-and-notify
+cycle cannot protect keys that already exist.

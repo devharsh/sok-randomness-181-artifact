@@ -1,0 +1,300 @@
+\section{Open Science}
+\label{app:openscience}
+All artifacts are publicly available on GitHub~\cite{trivedi2026randomnessartifact}, at
+\url{https://github.com/devharsh/sok-randomness-181-artifact}. Release v1.0 matches this paper.
+The repository contains the incident dataset (\texttt{incidents.csv}, \texttt{incidents.json}),
+the remedy codings and the counterfactual coding of every incident with a one-line reason
+(\texttt{remedies.csv}, \texttt{counterfactuals.csv}), the dataset schema, the scripts that
+generate the coverage matrix and check the tables of this paper against the dataset
+(\texttt{build\_coverage.py}, \texttt{build\_dataset.py}), the notebook behind
+Appendix~\ref{app:math}, and the editable draw.io sources of Figures~\ref{fig:pipeline}
+and~\ref{fig:coldcard}. No proprietary data or special hardware is required, and every primary
+source is cited with a resolvable identifier.
+
+\section{Ethical Considerations}
+\label{app:ethics}
+This work is a systematization of already-public information. Every incident we discuss has been
+disclosed by its vendor, published at a peer-reviewed venue, or both, and our reconstruction of the
+2026 \coldcard{} case relies exclusively on the vendor's own technical postmortem and a public
+independent engineering analysis~\cite{coinkite2026backgrounder,block2026coldcard,trm2026coldcard}.
+We introduce no new vulnerability, no exploit code, and no attack against any system that is not
+already remediated and publicly documented. The mechanisms we describe, including the offline
+enumeration of a reduced seed space, are presented only at the level of detail already available in
+the cited primary sources, and each is paired with its deployed remedy so that the material is more
+useful to defenders than to attackers. Because all cases are disclosed, coordinated
+vulnerability disclosure is not applicable. The study involves no human subjects and no personal or
+private data. On-chain figures are aggregate and were reported publicly by forensic analysts. We
+judge the benefit to defenders and standards bodies to outweigh the marginal risk of collecting
+public facts in one place.
+
+\section{Effective Entropy and Brute-Force Cost}
+\label{app:math}
+A seed carrying $H$ bits of min-entropy ranges over at most $2^{H}$ values, and no deterministic
+post-processing can enlarge this set, so hashing leaves the count of possible seeds
+unchanged~\cite{rfc4086,aumasson2024serious}. An adversary who can reproduce the seed
+inputs enumerates the $2^{H}$ candidates and, for each, derives the BIP-39 seed, the BIP-32 master
+key, and one address, then tests membership against a set of funded addresses~\cite{bip32,bip39}.
+Expected work is about $2^{H-1}$ derivations, against a design target of $H=128$. For
+\coldcard{}, the published analyses give different values of $H$ (Section~\ref{sec:coldcard}).
+On the Mk2 and Mk3, the vendor estimates about $40$ bits and Block an upper bound of about
+$40.7$~\cite{coinkite2026backgrounder,block2026coldcard}. On the Mk4, Mk5, and Q, the vendor
+estimates about $72$ bits, crediting the secure-element material mixed into the
+state~\cite{coinkite2026backgrounder}, whereas Block counts at most \bits{32} distinguishable
+output streams once the fallback state and call history are fixed, within a raw ceiling of about
+\bits{73.3}~\cite{block2026coldcard}. We therefore give the cost at $H=32$, $H=40.7$, and
+$H=72$. At $H=72$ the arithmetic below gives $2^{71}/10^{8}$ seconds, about $7.5\times10^{5}$
+years, which is infeasible unless the attacker can narrow the device state.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/bruteforce.pdf}
+\caption{Expected brute-force time as a function of effective seed min-entropy, at two
+derivation rates. Spaces of \bits{32} and \bits{40.7}, the smaller published estimates for
+\coldcard{}, are exhausted in minutes to days, whereas 72 bits, the vendor's estimate for later
+devices, and the 128-bit design target are infeasible. Recomputed in the accompanying notebook.}
+\Description{A log-scale plot of expected brute-force time in seconds against effective entropy
+in bits, with two curves for one million and one hundred million derivations per second, marking
+the 32-bit and 40.7-bit reduced spaces as feasible and the 128-bit target as infeasible.}
+\label{fig:bruteforce}
+\end{figure}
+
+Writing $r$ for the sustained derivation rate, the expected wall-clock time is $t \approx
+2^{H-1}/r$. At a conservative single-accelerator rate $r=10^{6}$ derivations per second, an
+$H=32$ space is exhausted in about $2^{31}/10^{6}\approx 2.1\times10^{3}$ seconds, under an hour.
+At a cluster rate $r=10^{8}$ it falls to tens of seconds. An $H=40.7$ space takes about
+$2^{39.7}/10^{6}\approx 9\times10^{5}$ seconds on one accelerator, roughly ten days, and a few
+hours at $r=10^{8}$. By contrast $H=128$ requires on the order of $2^{127}$ derivations,
+which is infeasible by any margin (Figure~\ref{fig:bruteforce}). Because the attacker tests each candidate against the whole
+population of funded addresses at once, using a hash-set or Bloom filter for constant-time
+membership, the cost is amortized across all victims rather than paid per wallet, which explains
+how thousands of addresses were swept in a single campaign. The accompanying notebook measures
+this scaling on synthetic identifiers: enumeration throughput falls by less than a factor of two
+as the target population grows from a single identifier to one million, confirming that the work
+is governed by the size of the candidate space and not by the number of victims.
+
+Two user-layer defenses can be quantified in the same terms, which is useful because they are the
+only ones that survive a total generator failure. Physical dice contribute
+$\log_2 6 \approx 2.5850$ bits per roll, and the vendor states that 50 or more private rolls
+protect a seed from this defect on their own~\cite{coinkite2026advisory}. The vendor's documentation asks
+for $50$ rolls for 128-bit security and $99$ rolls for 256-bit
+security~\cite{coldcard2026dice}. The first clears its target, at $129.2$ bits, and the second
+does not, at $255.9$ bits, because $\lceil 256/\log_2 6\rceil=100$. The shortfall of
+$0.089$ bits is operationally irrelevant, and we record it only because it is the same
+off-by-a-fraction entropy bookkeeping this paper systematizes, appearing here in the
+mitigation advice rather than in the generator. A BIP-39 passphrase acts as a salt in the PBKDF2 derivation of
+the seed, so for independent contributions the effective min-entropy is additive: a mnemonic
+carrying only $40$ bits combined with a passphrase carrying $80$ bits yields roughly $120$ bits,
+which restores infeasibility even though the mnemonic itself was generated by a broken
+generator~\cite{bip39}. This is the arithmetic behind the vendor's guidance that seeds made with
+enough private dice rolls, or protected by a strong passphrase, are at lower
+risk~\cite{coinkite2026advisory}.
+
+The consumption-stage (\stage{6}) failures rest on a different and exact identity. If one ECDSA
+private key $d$ signs two messages with hashes $h_1,h_2$ using the same nonce $k$, the two
+signatures share their first component $r$, and from $s_1=k^{-1}(h_1+r d)$ and $s_2=k^{-1}(h_2+r d)$
+modulo the group order $n$ one recovers
+\[
+k=\frac{h_1-h_2}{s_1-s_2}\bmod n,\qquad
+d=\frac{s_1 k-h_1}{r}\bmod n .
+\]
+No search is required: a single repeated nonce, visible on a public ledger, yields the key
+directly, which is why the PlayStation~3, Android, and cryptocurrency nonce failures were
+immediately
+catastrophic~\cite{fail0verflow2010ps3,michaelis2013randomly,bos2014ecc,breitner2019biased}. Even
+without a full repeat, a few bits of nonce bias per signature suffice for lattice-based key
+recovery, the basis of the Minerva and TPM-Fail
+attacks~\cite{breitner2019biased,jancar2020minerva,moghimi2020tpmfail}. The full derivations and
+numeric checks are provided in the accompanying notebook.
+
+\section{Per-stage incident narratives}\label{app:narratives}
+The following narratives expand the rows of Table~\ref{tab:incidents} stage by stage. The
+\coldcard{} fault path and the 2026 wallet cluster are treated in Section~\ref{sec:incidents}.
+
+\subsection{Source and seeding failures (\stage{1}, \stage{4})}
+The oldest and most numerous class starves the generator of entropy. Netscape derived SSL
+session keys from the process identifier, its parent, and the time of day, all guessable, so
+keys could be predicted in seconds~\cite{goldberg1996netscape}. The pattern returned at Internet
+scale in 2012: headless routers, firewalls, and servers that generated keys immediately after
+boot shared entropy pools, and researchers factored or reconstructed the private keys of
+more than a hundred thousand TLS and SSH hosts, and found RSA moduli sharing a single prime across
+unrelated devices~\cite{heninger2012mining,lenstra2012ron}. ROCA is a subtler seeding failure:
+Infineon's on-card key generation drew primes from a structured subset, cutting effective
+entropy far enough that the modulus alone revealed the key by Coppersmith's
+method~\cite{nemec2017roca}. What unites this class is that every value looks fine in isolation.
+The deficit is only visible across a population or against the mathematics of key generation.
+
+\subsection{Algorithm and back-door failures (\stage{3})}
+Here the generator is qualitatively wrong. MIFARE Crypto-1 drove its challenges with a 16-bit
+linear-feedback register that an attacker could roll forward, collapsing the card's
+security~\cite{garcia2008mifare,nohl2008rfid}. PHP applications minted password-reset tokens and
+session identifiers from non-cryptographic generators seeded from the request
+clock~\cite{argyros2012php}. Two cryptocurrency tools repeated the pattern with unusual clarity.
+The Libbitcoin Explorer \texttt{bx seed} command drew wallet seeds from the Mersenne Twister
+seeded with a 32-bit system clock value, reducing the entire global key space to roughly four
+billion candidates. The resulting Milk Sad vulnerability (CVE-2023-39910) was exploited in a
+coordinated theft costing hundreds of victims millions of dollars across several
+chains~\cite{milksad2023}. The Profanity vanity-address generator likewise derived Ethereum keys
+from a 32-bit seed, which allowed attackers to reconstruct the generator state and sweep the
+addresses it had produced~\cite{1inch2022profanity}. In both cases the generator was
+qualitatively wrong for the purpose and the seed was far too small, and in both cases the outputs
+looked perfectly ordinary on the chain until someone thought to enumerate them.
+The \dualec{} generator is the defining subversion case: its
+elliptic-curve constants admit a secret relationship that lets whoever chose them predict all
+future output from a small sample, a back door flagged in 2007, standardized regardless, shown
+practically exploitable in TLS in 2014, and traced through the Juniper incident in
+2016~\cite{shumow2007dualec,bernstein2016dualec,checkoway2014dualec,checkoway2016juniper}. The
+Juniper case also touches \stage{$\ast$}, because an attacker-substituted curve point turned a
+dormant back door into a live one. Even standardized, well-analyzed algorithms can fail here:
+CTR\_DRBG loses its state to a cache side channel when implementations skip
+reseeding~\cite{cohney2020blackswan}.
+
+\subsection{State-lifecycle failures (\stage{5})}
+Generators that are correct at instantiation can still repeat or expose state. Resetting a
+virtual machine to a snapshot rewinds its generator, so a server reissues the same nonces and
+session keys after every reset, an especially dangerous property once cloud deployment made
+snapshots routine~\cite{ristenpart2010vmreset,everspaugh2014whirlwind}. DUHK showed that a
+FIPS-certified ANSI X9.31 generator with a seed key hardcoded in firmware allowed passive state
+recovery and decryption of VPN traffic~\cite{cohney2018duhk}. Fork-safety gaps in library
+generators fall here as well~\cite{strenzke2016openssl}, as do the forward-security and
+state-recovery weaknesses identified in early analyses of the Linux
+generator~\cite{gutterman2006linux}.
+
+\subsection{Consumption failures (\stage{6})}
+Even a flawless generator is undone by a consumer that reuses or leaks a nonce. The
+PlayStation~3 signed with a constant ECDSA nonce, so two signatures exposed Sony's master
+code-signing key~\cite{fail0verflow2010ps3}. The same algebra recurs wherever nonces repeat or
+are biased: repeated nonces are visible on the Bitcoin ledger and have been mined to steal
+funds, and even a few biased bits per nonce enable lattice key
+recovery~\cite{bos2014ecc,breitner2019biased}. The Android \texttt{SecureRandom} defect drove
+this from the generator side, producing colliding nonces that emptied
+wallets~\cite{michaelis2013randomly}. Minerva and TPM-Fail show the leak need not be a full
+repeat: timing that reveals only the bit-length of each nonce is enough to recover keys from
+smart cards and trusted platform modules by lattice methods~\cite{jancar2020minerva,moghimi2020tpmfail}.
+
+
+\subsection{Randomness as a covert channel}
+\label{sec:covert}
+Every failure considered so far degrades randomness. A distinct and in some ways more troubling
+class does the opposite: it keeps the output statistically perfect while choosing it
+adversarially, so that the random field becomes a channel for smuggling secrets out of a device.
+Young and Yung formalized this as kleptography, showing how a black-box implementation can embed
+a secretly embedded trapdoor whose outputs are indistinguishable from honest ones to everyone
+except the attacker holding the corresponding private key~\cite{young1997kleptography}. The
+signature nonce is the natural carrier, because it is secret, per-signature, and published
+implicitly through the signature itself.
+
+The modern demonstration is Dark Skippy, disclosed to roughly fifteen vendors in March 2024. A
+malicious signing device derives its nonces from the seed rather than from randomness, placing
+the first half of a compromised seed in the nonce of one signature and the second half in
+another. The attacker then runs Pollard's kangaroo algorithm against the public nonce points to
+solve for the secret nonces and reassemble the seed. Two signatures suffice, and the attack is
+not specific to any product but is a general capability that any malicious signer
+possesses~\cite{darkskippy2024}. Nothing about the resulting signatures is anomalous: they verify
+correctly, the nonces are uniformly distributed, and no statistical test on the device's output
+can distinguish them from honest ones.
+
+This class matters to our systematization for a structural reason. Every remedy in
+Section~\ref{sec:remedies} that improves entropy \emph{quality} is powerless here, because the
+entropy is already perfect. The problem is that the device, not the user, chooses it. Defenses
+must therefore constrain \emph{who} contributes the randomness rather than how good it is, which
+is precisely what the anti-exfil protocols of Section~\ref{sec:remedies} do. It also sharpens the
+thesis of this paper. We argued that statistical testing cannot detect predictable-but-uniform
+output. Kleptography shows it equally cannot detect adversarially-chosen-but-uniform output. Both
+evade the same defense for the same reason, namely that uniformity is a property of the output
+distribution while security depends on how the value was chosen.
+
+\section{Remedies by stage, in detail}\label{app:remedystage}
+This appendix expands the remedy families of Table~\ref{tab:remedies} in pipeline order, asking
+what defends each stage and noting where one remedy reaches across several stages.
+
+\textbf{Source and seeding (\stage{1}, \stage{2}, \stage{4}).} The modern baseline is a vetted
+physical source with continuous health tests, as codified in NIST SP
+800-90B~\cite{nist80090b}, feeding a generator that blocks until it has accumulated enough
+entropy. The deployment lesson of the 2012 boot-entropy failures is precisely this last point:
+Linux's \texttt{getrandom} system call and the move away from non-blocking early reads exist to
+prevent key generation before the pool is seeded~\cite{heninger2012mining,dodis2013devrandom}.
+Where a device cannot gather entropy locally, an entropy-quality protocol can have a party prove
+its key was generated with good randomness~\cite{corrigangibbs2013ensuring}.
+
+\textbf{Algorithm and state (\stage{3}, \stage{5}).} Using a standardized CSPRNG such as
+HMAC-DRBG or a Fortuna-style design closes the qualitative-weakness gap at low
+friction~\cite{nist80090a,kelsey1999yarrow}, and hardware generators can themselves be given a
+provable-security treatment rather than being trusted on assertion~\cite{shrimpton2015intel},
+provided implementations reseed and protect state.
+The CTR\_DRBG cache attacks are a reminder that the algorithm choice must be paired with state
+hygiene~\cite{cohney2020blackswan}. Fork-safety and virtual-machine reseeding hooks close the
+lifecycle gaps behind the VM-reset and Whirlwind
+findings~\cite{ristenpart2010vmreset,everspaugh2014whirlwind}.
+
+\textbf{Consumption (\stage{6}).} The single highest-value remedy for signatures is to remove the
+dependence on per-signature randomness. RFC 6979 derives the ECDSA nonce deterministically from
+the message and private key, and EdDSA builds this in by
+construction~\cite{rfc6979,bernstein2012ed25519}. Had deterministic nonces been universal, the
+PlayStation~3, Android, and cryptocurrency nonce failures could not have
+occurred~\cite{fail0verflow2010ps3,michaelis2013randomly,breitner2019biased}. Full determinism,
+however, trades one risk for another, and the mechanism is worth stating precisely because it
+explains the direction the standards have taken. Since the nonce is now a function of the key and
+message alone, an adversary who induces a fault in one of two signatures over the same message
+obtains two signatures that share a nonce, whereupon the private key falls out by exactly the
+algebra of nonce reuse given in Appendix~\ref{app:math}. Deterministic ECDSA and EdDSA are
+demonstrably vulnerable to this~\cite{poddebniak2018fault}. Repeating an identical computation
+also lowers the noise floor for side-channel analysis, a concern acute on smart cards and
+embedded devices. The current direction is therefore \emph{hedged} signing, which folds a
+fresh secret value into the deterministic derivation. The property that makes this the right
+default is graceful degradation: the added randomness need not be perfect, and even if the same
+value is reused across two messages the scheme is no weaker than deterministic ECDSA, so a failed
+generator cannot reintroduce the catastrophic algebraic key recovery of fully randomized
+signing~\cite{cfrg2025hedged}. Neither variant helps key \emph{generation}, which is where
+\coldcard{} failed.
+
+\textbf{Anti-exfiltration (\stage{6}).} Against the covert-channel attacks of
+Section~\ref{sec:covert}, entropy quality is beside the point and the remedy must instead deny
+the signer sole control of the nonce. Sign-to-contract, deployed as anti-klepto or anti-exfil,
+achieves this: the device first commits to a nonce point, the host then supplies its own random
+contribution, and the device must produce a nonce that verifiably incorporates that contribution
+by the agreed tweak. The host checks the final nonce against the earlier commitment, so a device
+that tried to steer the nonce toward an encoding of the seed would have had to predict the host's
+contribution in advance~\cite{bitbox2019antiklepto,blockstream2020antiexfil}. This closes at the
+signing stage the same gap that commit-reveal entropy checks close at key generation, and the two
+together are the only remedies in our catalog that constrain a device the user cannot inspect.
+
+\textbf{Defense in depth (\stage{4}--\stage{6}).} Hedged cryptography hashes the secret key, the
+message, and whatever randomness is available together, so that output stays secure as long as
+\emph{any} input is unpredictable~\cite{bellare2009hedged}. This is the most general structural
+defense against bad randomness, and its absence from mainstream libraries is a gap we revisit in
+Section~\ref{sec:discussion}. User-supplied entropy, such as \coldcard{}'s optional dice rolls
+and BIP-39 passphrase, is a coarse but real instance of the same idea, and the vendor's guidance
+treats enough private dice rolls as protection against the generator defect~\cite{coinkite2026advisory,bip39}.
+
+\textbf{Physical and component defenses (\stage{1}, \stage{2}).} Against the induced failures of
+Section~\ref{sec:induced}, code-level measures are useless and hardware measures are the only
+answer. The state of practice in secure elements combines a generator evaluated under a
+recognized scheme such as AIS-31 or PTG.2 with environmental sensors, active shielding, and
+glitch and voltage detection, so that a device pushed outside its operating envelope halts rather
+than emitting degraded output~\cite{ledger2026coldcard}. The design principle worth extracting is
+\emph{fail-closed}: a generator that stalls on a health-test failure is safe, whereas one that
+returns a value anyway converts a detected fault into a silent compromise, which is exactly the
+failure mode of the Zen 5 \texttt{RDSEED} defect~\cite{amd2025rdseed}. Where a single component
+cannot be trusted at all, the response is architectural. Mavroudis \etal{} show that a device can
+be assembled from several independently sourced cryptographic chips such that the output remains
+secure unless a threshold of them is subverted, which converts a supply-chain compromise from a
+total break into a tolerated fault~\cite{mavroudis2017touch}. Combining independent generators,
+for example by mixing an on-chip source with a secure-element source, is the same idea in
+miniature, though it only helps if the combining step actually consumes both inputs, a caveat the
+\coldcard{} reseed illustrates painfully~\cite{block2026coldcard}.
+
+\textbf{Verifiable entropy (\stage{$\ast$}).} The most direct answer to a device that silently
+substitutes a weak generator is to make the device \emph{prove} it used the entropy it claims.
+Trezor's entropy check does this with a commit-reveal protocol: the device commits to its own
+entropy contribution before the host sends its share, the host then requests extended public keys
+as a fingerprint of the resulting candidate wallet, and on rejection the device reveals its
+contribution so the host can check it against the commitment and rebuild the candidate
+itself~\cite{trezor2025entropycheck}. A device that ignores the host's contribution, or that draws
+its own from a predictable source, cannot pass repeated rounds. This is the only remedy in our
+catalog that attacks the \stage{$\ast$} surface from outside the device, and it generalizes: any
+setting with a second party present at key generation can demand a proof of freshness rather than
+trusting an assertion, an idea with a research pedigree in entropy-quality
+protocols~\cite{corrigangibbs2013ensuring}.
+
+
+

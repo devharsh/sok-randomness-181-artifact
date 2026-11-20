@@ -1,0 +1,67 @@
+\section{Discussion and Open Problems}
+\label{sec:discussion}
+
+Sections~\ref{sec:remedies} and~\ref{sec:effectiveness} gave the practical findings. Here we add
+the patterns that no single table shows, explain why the deployment gap persists, and set out
+questions for researchers, each tied to a part of the matrix.
+
+\subsection{Patterns across the record}
+Three patterns recur beyond what the tables encode. First, failures are \emph{silent by
+construction}: nineteen of the twenty-eight emit no statistical signal, so they are found by
+exploitation or by population-scale measurement, and dwell times are long, about two years for the
+Debian patch and more than five years for \coldcard{}~\cite{yilek2009debian,coinkite2026advisory}.
+The released dataset records dwell time wherever both dates have a primary source. Second, systems
+generate their most important long-term keys when they have the least entropy: at first boot, on
+headless hardware, or right after a virtual machine is
+cloned~\cite{heninger2012mining,ristenpart2010vmreset,everspaugh2014whirlwind}. This lifecycle
+mismatch is a structural hazard, not an implementation slip. Third, per-signature nonces add a
+runtime dependence on randomness that the mathematics does not need, and every consumption failure
+in the corpus except the two timing leaks is an instance of paying for randomness that a
+deterministic or hedged construction would have removed~\cite{rfc6979,bernstein2012ed25519,bellare2009hedged}.
+
+\subsection{Why the gap persists}
+Twenty-two of the twenty-four preventable incidents had a remedy available at least in part. The
+reasons are mundane. Insecure options are often the defaults, blocking for entropy conflicts with
+boot-time targets, deterministic and hedged constructions are not yet the library default,
+reproducible-build tooling for firmware is immature, and silent failures go unpunished until a
+large loss occurs. None of these is a cryptographic obstacle. They are problems of defaults,
+incentives, and engineering process.
+
+\subsection{Questions for researchers}
+The matrix also shows where current remedies stop. We state six open problems, each anchored in
+a column or row.
+\begin{enumerate}[leftmargin=*,itemsep=1pt,topsep=2pt]
+\item \emph{Verifying the build path} (column R9, the only guard of \stage{$\ast$}). Reproducible
+builds bind source to binary but say nothing about behavior. How can one state, and check on a
+binary, that key generation reaches the validated source, whether by link-time analysis of
+generator symbols, by a power-on test that cannot pass on a fallback, or by attestation?
+\item \emph{Certifying unpredictability rather than uniformity} (column R8, which prevents
+nothing). Can static analysis of entropy flow bound the seed space of a deployed generator from its
+code and wiring? Such a bound would complement the SP 800-90B estimators, which themselves
+underestimate min-entropy for some non-IID sources~\cite{zhu2017entropy,nist80090b}.
+\item \emph{Closing the rows with no preventer.} The CTR\_DRBG cache attack, Minerva, TPM-Fail, and
+ROCA are prevented by no randomness remedy. Generator and signature validation could require
+verified constant-time code and vetted key-generation algorithms, which would bring implementation
+security into randomness assurance.
+\item \emph{Detecting silent failures in the field.} Thirteen of the eighteen remotely exploitable
+incidents are silent. Population-scale monitoring of public keys and ledger addresses is the only
+early signal, and it lacks shared infrastructure: a corpus of generator outputs from deployed
+devices, labeled weak-key populations, and reproducible builds of known-vulnerable firmware. The
+2026 disclosures produced labeled address sets~\cite{coinspect2026illbloom} that should be curated
+deliberately rather than released as a byproduct.
+\item \emph{Making the safe construction the default} (columns R2, R3, R5). Which interface and
+standard changes would make a vetted CSPRNG, blocking seeding, and hedged nonces the path of least
+resistance, and how can their adoption be measured?
+\item \emph{Recovery at scale.} A patch cannot repair a key already generated. Detecting, rotating,
+and revoking affected keys across an ecosystem, and migrating wallet funds safely, remain largely
+manual.
+\end{enumerate}
+
+\subsection{Limitations}
+The corpus is purposive and drawn from public reports, so it favors failures that were found and
+disclosed, and its counts describe the corpus rather than the population (Section~\ref{sec:selection}).
+One author coded the incidents and graded the matrix. The grading rules, the per-cell reasons, and
+the generating script are released so that others can re-grade and recompute. We code
+observability and blast radius from public reports rather than independent measurement, and we
+do not re-derive the attacks. For \coldcard{}, two published analyses disagree on the remaining
+entropy, and we report both (Section~\ref{sec:coldcard}).
